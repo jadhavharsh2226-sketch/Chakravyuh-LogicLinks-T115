@@ -24,6 +24,8 @@ interface AppShellProps {
   onNavigate: (view: string) => void;
   children: React.ReactNode;
   pageTitle?: string;
+  studentName?: string;
+  studentXP?: number;
 }
 
 export const AppShell: React.FC<AppShellProps> = ({
@@ -31,6 +33,8 @@ export const AppShell: React.FC<AppShellProps> = ({
   onNavigate,
   children,
   pageTitle,
+  studentName = 'Harsh Jadhav',
+  studentXP = 850,
 }) => {
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -112,16 +116,27 @@ export const AppShell: React.FC<AppShellProps> = ({
 
           <div className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#1D2125] border border-[#282E33] text-[#C6FF3D] font-bold text-xs">
             <Sparkles className="w-3.5 h-3.5" />
-            <span>850 XP</span>
+            <span>{studentXP} XP</span>
           </div>
 
           <div className="flex items-center gap-2 pl-2 border-l border-[#282E33]">
-            <div className="w-7 h-7 rounded-full bg-[#1D2125] border border-[#282E33] flex items-center justify-center text-[#9CA3A8] font-bold text-xs">
-              <User className="w-3.5 h-3.5" />
-            </div>
-            <span className="text-[#ECEBE4] text-xs font-sans font-semibold hidden md:inline">
-              Student Mode
-            </span>
+            <button
+              onClick={() => onNavigate('login')}
+              className="flex items-center gap-2 hover:bg-[#1D2125] p-1 rounded-xl transition-all text-left"
+              title="Switch Student or Change Syllabus"
+            >
+              <div className="w-7 h-7 rounded-full bg-[#1D2125] border border-[#282E33] flex items-center justify-center text-[#9CA3A8] font-bold text-xs">
+                <User className="w-3.5 h-3.5" />
+              </div>
+              <div className="hidden md:block">
+                <div className="text-[#ECEBE4] text-xs font-sans font-semibold leading-tight">
+                  {studentName}
+                </div>
+                <div className="text-[10px] text-[#C6FF3D] font-mono leading-tight">
+                  Switch / Login ›
+                </div>
+              </div>
+            </button>
           </div>
         </div>
       </header>

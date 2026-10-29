@@ -133,6 +133,12 @@ export const LandingPage: React.FC<LandingPageProps> = ({
 
           {/* Primary CTA Button */}
           <div className="flex items-center gap-3">
+            <button
+              onClick={() => onNavigate('login')}
+              className="text-xs font-mono text-[#C6FF3D] hover:underline font-bold px-2 py-1 rounded-lg border border-[#C6FF3D]/30 bg-[#C6FF3D]/10"
+            >
+              Student Login ⚡
+            </button>
             <BenchButton
               variant="primary"
               size="sm"

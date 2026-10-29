@@ -10,11 +10,12 @@ import { ProgressView } from './components/progress/ProgressView';
 import { ChakravyuhaChallengeView } from './components/chakravyuha/ChakravyuhaChallengeView';
 import { ArduinoCodeLabView } from './components/codelab/ArduinoCodeLabView';
 import { StudentOnboardingModal } from './components/common/StudentOnboardingModal';
+import { LoginView } from './components/auth/LoginView';
 import { StudentProfile } from './types/student';
 import { DEFAULT_STUDENT_PROFILE, UNIVERSITY_SYLLABI } from './services/syllabusData';
 
 export function App() {
-  const [currentView, setCurrentView] = useState<string>('landing');
+  const [currentView, setCurrentView] = useState<string>('login');
   const [selectedMissionId, setSelectedMissionId] = useState<string | null>(null);
   const [isOnboardingOpen, setIsOnboardingOpen] = useState<boolean>(false);
 
@@ -51,6 +52,24 @@ export function App() {
 
   const currentSyllabus = UNIVERSITY_SYLLABI[studentProfile.track] || UNIVERSITY_SYLLABI.BCA_YEAR_1;
 
+  if (currentView === 'login') {
+    return (
+      <LoginView
+        onLogin={(newProfile) => {
+          handleSaveProfile(newProfile);
+          setCurrentView('dashboard');
+        }}
+        onExploreGuest={() => {
+          handleSaveProfile(DEFAULT_STUDENT_PROFILE);
+          setCurrentView('dashboard');
+        }}
+        onViewLanding={() => {
+          setCurrentView('landing');
+        }}
+      />
+    );
+  }
+
   if (currentView === 'landing') {
     return (
       <>
@@ -73,6 +92,8 @@ export function App() {
       <AppShell
         currentView={currentView}
         onNavigate={handleNavigate}
+        studentName={studentProfile.name}
+        studentXP={studentProfile.xp}
         pageTitle={
           currentView === 'chakravyuha'
             ? 'CHAKRAVYUH Challenge Arena'
