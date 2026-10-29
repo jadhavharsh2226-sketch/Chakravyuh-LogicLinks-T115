@@ -10,6 +10,7 @@ import { ProgressView } from './components/progress/ProgressView';
 import { ChakravyuhaChallengeView } from './components/chakravyuha/ChakravyuhaChallengeView';
 import { ArduinoCodeLabView } from './components/codelab/ArduinoCodeLabView';
 import { StudentOnboardingModal } from './components/common/StudentOnboardingModal';
+import { FloatingVoltCompanion } from './components/common/FloatingVoltCompanion';
 import { LoginView } from './components/auth/LoginView';
 import { StudentProfile } from './types/student';
 import { DEFAULT_STUDENT_PROFILE, UNIVERSITY_SYLLABI } from './services/syllabusData';
@@ -82,6 +83,11 @@ export function App() {
           onClose={() => setIsOnboardingOpen(false)}
           currentProfile={studentProfile}
           onSaveProfile={handleSaveProfile}
+        />
+        <FloatingVoltCompanion
+          currentView={currentView}
+          studentProfile={studentProfile}
+          onNavigate={handleNavigate}
         />
       </>
     );
@@ -208,6 +214,13 @@ export function App() {
         onClose={() => setIsOnboardingOpen(false)}
         currentProfile={studentProfile}
         onSaveProfile={handleSaveProfile}
+      />
+
+      {/* Persistent 3D Floating Companion */}
+      <FloatingVoltCompanion
+        currentView={currentView}
+        studentProfile={studentProfile}
+        onNavigate={handleNavigate}
       />
     </>
   );
