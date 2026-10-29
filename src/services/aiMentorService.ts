@@ -78,7 +78,7 @@ RESPONSE GUIDELINES:
           'X-Title': 'CircuitVerse AI',
         },
         body: JSON.stringify({
-          model: 'google/gemini-2.0-flash-001', // Fast, high-intelligence model
+          model: 'openrouter/free', // 100% Free OpenRouter model with zero credit requirement
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userQuestion },
@@ -90,7 +90,7 @@ RESPONSE GUIDELINES:
 
       if (response.ok) {
         const data = await response.json();
-        const replyText = data?.choices?.[0]?.message?.content;
+        const replyText = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.message?.reasoning;
         if (replyText) {
           // Infer expression
           let expression: VoltResponse['expression'] = 'happy';

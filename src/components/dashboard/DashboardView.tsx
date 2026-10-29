@@ -161,16 +161,16 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
               <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 border border-[#C6FF3D]/40 text-[10px] font-mono text-[#C6FF3D] font-bold">
                 <Shield className="w-3 h-3" />
-                <span>HACKATHON 2026</span>
+                <span>CIRCUIT ARENA</span>
               </div>
             </div>
 
             <div className="p-5 space-y-2">
               <h3 className="font-display text-base font-bold text-[#ECEBE4] group-hover:text-[#C6FF3D] transition-colors">
-                CHAKRAVYUH Arena
+                Circuit Arena
               </h3>
               <p className="text-[11px] text-[#9CA3A8] leading-relaxed">
-                Breach the 3-layer electronic maze against the timer: Padmavyuha, Karmavyuha, and Core!
+                Multi-stage hardware troubleshooting puzzles: Boolean traps, faulty 4:1 MUX, and PWM timer locks.
               </p>
               <div className="pt-2 text-[11px] font-mono font-bold text-[#C6FF3D] flex items-center gap-1">
                 <span>Enter Arena (+500 XP)</span>

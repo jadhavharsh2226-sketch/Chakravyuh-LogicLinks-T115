@@ -28,12 +28,12 @@ export const LoginView: React.FC<LoginViewProps> = ({
   const [studentName, setStudentName] = useState('Harsh Jadhav');
   const [collegeName, setCollegeName] = useState('DYPSEM Pune');
   const [selectedTrack, setSelectedTrack] = useState<AcademicTrack>('ENTC_SEMESTER_1_2');
-  const [selectedGoal, setSelectedGoal] = useState<StudentGoal>('CHAKRAVYUH_CHALLENGE');
+  const [selectedGoal, setSelectedGoal] = useState<StudentGoal>('LOGIC_GATE_PRACTICE');
 
   // Mascot dynamic state
   const [voltExpression, setVoltExpression] = useState<VoltExpression>('happy');
   const [voltSpeech, setVoltSpeech] = useState<string>(
-    "Hi there! ⚡ I'm Volt. Pick your syllabus and let's jump into the workbench!"
+    "Hi there! ⚡ I'm Volt, your Agentic AI assistant. I can wire gates, flip switches, and teach your syllabus!"
   );
 
   const TRACKS: Array<{
@@ -86,8 +86,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
     sounds.playClick();
     setSelectedGoal(goal);
     setVoltExpression('celebrating');
-    if (goal === 'CHAKRAVYUH_CHALLENGE') {
-      setVoltSpeech("CHAKRAVYUH 2026 Arena selected! The 3-layer maze awaits! 🛡️");
+    if (goal === 'LOGIC_GATE_PRACTICE') {
+      setVoltSpeech("Logic Gate Practice selected! Master AND, OR, XOR, and Boolean Algebra! ⚡");
     } else if (goal === 'EXAM_PREP') {
       setVoltSpeech("Exam Viva Prep mode! High-yield questions and quick tricks ready! 📚");
     } else {
@@ -170,7 +170,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
                 ✓ SPPU / AICTE Curriculum
               </span>
               <span className="px-2.5 py-1 rounded-full bg-[#161C22] border border-[#22282F] text-[#3DDCFF]">
-                ✓ CHAKRAVYUH 2026 Ready
+                ✓ Autonomous Agentic AI
               </span>
             </div>
           </div>
@@ -257,10 +257,10 @@ export const LoginView: React.FC<LoginViewProps> = ({
                 <div className="grid grid-cols-3 gap-2">
                   {[
                     {
-                      id: 'CHAKRAVYUH_CHALLENGE' as StudentGoal,
-                      label: 'CHAKRAVYUH',
-                      sub: 'Hackathon Arena',
-                      icon: <Shield className="w-3.5 h-3.5 text-[#C6FF3D]" />,
+                      id: 'LOGIC_GATE_PRACTICE' as StudentGoal,
+                      label: 'Logic Circuits',
+                      sub: 'Gates & Truth Tables',
+                      icon: <Cpu className="w-3.5 h-3.5 text-[#C6FF3D]" />,
                     },
                     {
                       id: 'EXAM_PREP' as StudentGoal,
@@ -325,8 +325,8 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
       {/* Clean Bottom Footer */}
       <footer className="h-10 px-6 border-t border-[#20262D] flex items-center justify-between text-[11px] font-mono text-[#646F77] z-20">
-        <span>DYPSEM Hackathon 2026</span>
-        <span>Smart E&TC Platform · Powered by Volt AI</span>
+        <span>CircuitVerse AI</span>
+        <span>Smart E&TC Platform · Powered by Volt Agentic AI</span>
       </footer>
     </div>
   );

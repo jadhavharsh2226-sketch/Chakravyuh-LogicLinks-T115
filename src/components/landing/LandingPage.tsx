@@ -54,7 +54,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               className="text-[#C6FF3D] font-bold hover:text-white flex items-center gap-1.5 transition-colors"
             >
               <Shield className="w-3.5 h-3.5" />
-              <span>CHAKRAVYUH 2026</span>
+              <span>Circuit Arena</span>
             </button>
             <button
               onClick={() => onNavigate('lab')}
@@ -107,7 +107,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12161A] border border-[#22282F]">
                 <span className="w-2 h-2 rounded-full bg-[#C6FF3D] animate-ping" />
                 <span className="font-mono text-[11px] font-bold text-[#C6FF3D] uppercase tracking-wider">
-                  DYPSEM HACKATHON · CHAKRAVYUH 2026
+                  INTERACTIVE ENGINEERING / 001 · AGENTIC WORKBENCH
                 </span>
               </div>
 
@@ -119,7 +119,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               </h1>
 
               <p className="text-base sm:text-lg text-[#9CA3A8] leading-relaxed max-w-xl mb-8">
-                Build real combinational logic, disarm hardware glitch traps in the CHAKRAVYUH arena, and flash virtual ATmega microcontrollers—guided by <strong className="text-[#ECEBE4]">Volt</strong>, your 3D AI companion.
+                Build real combinational logic, solve hardware glitch puzzles in the Circuit Arena, and flash virtual ATmega microcontrollers—guided by <strong className="text-[#ECEBE4]">Volt</strong>, your 3D Agentic AI companion who moves the cursor and takes action.
               </p>
 
               <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
@@ -139,7 +139,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                   onClick={() => onNavigate('chakravyuha')}
                   icon={<Shield className="w-4 h-4 text-[#C6FF3D]" />}
                 >
-                  CHAKRAVYUH Arena
+                  Circuit Arena
                 </BenchButton>
               </div>
 
@@ -231,16 +231,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
                 <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 backdrop-blur-md border border-[#C6FF3D]/40 text-[10px] font-mono text-[#C6FF3D] font-bold">
-                  02 / HACKATHON ARENA
+                  02 / TROUBLESHOOTING
                 </span>
               </div>
 
               <div className="p-6 space-y-3">
                 <h3 className="font-display text-lg font-bold text-[#ECEBE4] group-hover:text-[#C6FF3D] transition-colors">
-                  CHAKRAVYUH 2026 Challenge
+                  Circuit Troubleshooting Arena
                 </h3>
                 <p className="text-xs text-[#9CA3A8] leading-relaxed">
-                  Breach the 3-layer timed electronic maze: disarm Padmavyuha's De Morgan trap, troubleshoot Karmavyuha's faulty 4:1 MUX, and synchronize ATmega PWM.
+                  Interactive multi-stage electronic puzzles: disarm logic traps, troubleshoot faulty 4:1 multiplexers, and synchronize timer PWM signals.
                 </p>
                 <div className="pt-2 text-xs font-mono font-bold text-[#C6FF3D] flex items-center gap-1">
                   <span>Enter Arena (+500 XP)</span>
@@ -318,7 +318,7 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#C6FF3D]" />
-            <span>DYPSEM Hackathon 2026 · Smart E&TC Learning Platform</span>
+            <span>CircuitVerse AI · Precision Digital Engineering Platform</span>
           </div>
           <div className="flex items-center gap-6">
             <button onClick={() => onNavigate('login')} className="hover:text-[#ECEBE4]">

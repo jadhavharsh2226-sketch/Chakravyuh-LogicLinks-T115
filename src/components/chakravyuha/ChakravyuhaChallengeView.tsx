@@ -236,14 +236,14 @@ export const ChakravyuhaChallengeView: React.FC<{ onNavigate?: (view: string) =>
             <div>
               <div className="flex items-center gap-2">
                 <span className="font-mono text-[10px] tracking-wider text-[#C6FF3D] font-bold uppercase">
-                  DYPSEM E&TC HACKATHON
+                  ELECTRONIC HARDWARE LAB
                 </span>
                 <span className="px-2 py-0.5 rounded-full text-[10px] bg-[#C6FF3D]/10 text-[#C6FF3D] font-mono font-bold">
-                  LIVE CHALLENGE
+                  MULTI-STAGE CHALLENGE
                 </span>
               </div>
               <h1 className="font-display text-xl sm:text-2xl font-bold text-[#ECEBE4]">
-                CHAKRAVYUH Arena
+                Circuit Arena
               </h1>
             </div>
           </div>

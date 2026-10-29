@@ -45,7 +45,7 @@ export const AppShell: React.FC<AppShellProps> = ({
       items: [
         { id: 'dashboard', label: 'My Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
         { id: 'lab', label: 'Circuit Playground', icon: <Cpu className="w-4 h-4 text-[#00E5FF]" /> },
-        { id: 'chakravyuha', label: 'CHAKRAVYUH Arena', icon: <Shield className="w-4 h-4 text-[#C6FF3D]" /> },
+        { id: 'chakravyuha', label: 'Circuit Arena', icon: <Shield className="w-4 h-4 text-[#C6FF3D]" /> },
         { id: 'code-lab', label: 'Arduino Code Lab', icon: <Code2 className="w-4 h-4 text-[#3DDCFF]" /> },
       ],
     },

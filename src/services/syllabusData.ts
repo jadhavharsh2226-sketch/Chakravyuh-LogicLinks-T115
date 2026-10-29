@@ -150,7 +150,7 @@ export const UNIVERSITY_SYLLABI: Record<string, UniversitySyllabus> = {
 export const DEFAULT_STUDENT_PROFILE: StudentProfile = {
   name: 'ENTC Engineer',
   track: 'ENTC_SEMESTER_1_2',
-  goal: 'CHAKRAVYUH_CHALLENGE',
+  goal: 'LOGIC_GATE_PRACTICE',
   dailyGoalMinutes: 10,
   streakDays: 4,
   hearts: 5,

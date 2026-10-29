@@ -8,7 +8,7 @@ export type AcademicTrack =
   | 'BEGINNER';
 
 export type StudentGoal = 
-  | 'CHAKRAVYUH_CHALLENGE'
+  | 'LOGIC_GATE_PRACTICE'
   | 'EXAM_PREP' 
   | 'PRACTICAL_LABS' 
   | 'ARDUINO_EMBEDDED' 
