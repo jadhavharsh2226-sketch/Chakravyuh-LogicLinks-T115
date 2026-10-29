@@ -27,6 +27,8 @@ import confetti from 'canvas-confetti';
 import { sounds } from '../../services/soundEffects';
 import { AgenticAction } from '../../types/agentic';
 import { AgenticCursorState } from './AgenticCursor';
+import { autonomousAgent, AgentExecutionContext } from '../../engine/agent/autonomousAgent';
+import { AgentTaskPlan } from '../../engine/agent/agentTools';
 
 import { StudentProfile } from '../../types/student';
 import { DEFAULT_STUDENT_PROFILE } from '../../services/syllabusData';
@@ -120,6 +122,16 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
     isClicking: false,
     statusText: '',
   });
+
+  // Autonomous Agent Execution State
+  const [isAgentRunning, setIsAgentRunning] = useState(false);
+  const [agentPlan, setAgentPlan] = useState<AgentTaskPlan | null>(null);
+  const [agentActiveStep, setAgentActiveStep] = useState<{
+    current: number;
+    total: number;
+    thought: string;
+    tool: string;
+  } | null>(null);
 
   const simResult = useMemo(() => {
     return CircuitSimulator.runSimulation(components, connections);
@@ -502,6 +514,148 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
     }
   };
 
+  /**
+   * Autonomous Goal Executor: Plans, uses tools sequentially, observes results, and verifies completion
+   */
+  const handleExecuteAutonomousGoal = async (goal: string) => {
+    setIsAgentRunning(true);
+    setRightPanelTab('mentor');
+    setShowRightPanel(true);
+
+    const context: AgentExecutionContext = {
+      getComponents: () => components,
+      getConnections: () => connections,
+      getActiveMission: () => activeMission,
+      addComponent: (type, label, x, y) => {
+        const newId = `${type.toLowerCase()}_${Date.now().toString().slice(-4)}`;
+        const isGate = ['AND', 'OR', 'NOT', 'XOR', 'NAND', 'NOR', 'XNOR'].includes(type);
+        const numInputs = type === 'NOT' || type === 'BUFFER' ? 1 : isGate ? 2 : type === 'LED' || type === 'PROBE' ? 1 : 0;
+        const numOutputs = type === 'LED' || type === 'PROBE' ? 0 : 1;
+
+        const newComp: CircuitComponent = {
+          id: newId,
+          type,
+          label: label || (type === 'LED' ? 'Light Bulb' : type === 'SWITCH' ? 'Switch' : `${type} Gate`),
+          x: x || 320,
+          y: y || 200,
+          inputs: Array.from({ length: numInputs }).map((_, i) => ({
+            id: `${i}`,
+            name: `In ${i + 1}`,
+            type: 'input',
+            value: 0,
+            index: i,
+          })),
+          outputs: Array.from({ length: numOutputs }).map((_, i) => ({
+            id: `${i}`,
+            name: 'Out',
+            type: 'output',
+            value: 0,
+            index: i,
+          })),
+          state: type === 'SWITCH' ? { toggle: false } : {},
+        };
+
+        setComponents((prev) => [...prev, newComp]);
+        setSelectedComponentId(newId);
+        return newId;
+      },
+      connectPins: (fromCompId, fromPortId, toCompId, toPortId) => {
+        handleConnectPorts(fromCompId, fromPortId, toCompId, toPortId);
+      },
+      setInputState: (compId, value) => {
+        setComponents((prev) =>
+          prev.map((c) =>
+            c.id === compId && c.type === 'SWITCH'
+              ? { ...c, state: { ...c.state, toggle: value === 1 } }
+              : c
+          )
+        );
+      },
+      deleteComponent: (compId) => {
+        handleDeleteComponent(compId);
+      },
+      deleteConnection: (wireId) => {
+        handleDeleteConnection(wireId);
+      },
+      clearCircuit: () => {
+        handleClearCanvas();
+      },
+      runSimulation: () => {
+        return CircuitSimulator.runSimulation(components, connections);
+      },
+      verifyTruthTable: () => {
+        return CircuitValidator.validateMission(components, connections, activeMission);
+      },
+      moveCursor: async (x, y, statusText, isClicking = false) => {
+        setCursorState({
+          visible: true,
+          x,
+          y,
+          statusText,
+          isClicking,
+        });
+        await new Promise((r) => setTimeout(r, 450));
+        if (isClicking) {
+          await new Promise((r) => setTimeout(r, 180));
+          setCursorState((prev) => ({ ...prev, isClicking: false }));
+        }
+      },
+    };
+
+    await autonomousAgent.executeTask(goal, context, {
+      onPlanReady: (plan) => {
+        setAgentPlan(plan);
+      },
+      onStepStart: (cur, tot, step) => {
+        setAgentActiveStep({
+          current: cur + 1,
+          total: tot,
+          thought: step.thought,
+          tool: step.tool,
+        });
+      },
+      onStepComplete: (cur, tot, step, res) => {
+        setAgentPlan((prev) =>
+          prev
+            ? {
+                ...prev,
+                steps: prev.steps.map((s) =>
+                  s.id === step.id ? { ...s, status: step.status, result: res } : s
+                ),
+              }
+            : prev
+        );
+      },
+      onVerificationResult: (report) => {
+        if (report.isPassing) {
+          confetti({ particleCount: 60, spread: 70, origin: { y: 0.6 } });
+        }
+      },
+      onFinished: (summary, success) => {
+        setIsAgentRunning(false);
+        setAgentActiveStep(null);
+        if (success) {
+          confetti({ particleCount: 80, spread: 80, origin: { y: 0.6 } });
+        }
+        setTimeout(() => {
+          setCursorState((prev) => ({ ...prev, visible: false }));
+        }, 1200);
+      },
+      onError: (err) => {
+        setIsAgentRunning(false);
+        setAgentActiveStep(null);
+        setCursorState((prev) => ({ ...prev, visible: false }));
+      },
+    });
+  };
+
+  const handleCancelAutonomousTask = () => {
+    autonomousAgent.cancel();
+    setIsAgentRunning(false);
+    setAgentActiveStep(null);
+    setCursorState((prev) => ({ ...prev, visible: false }));
+  };
+
   return (
     <div className="flex flex-col h-[calc(100vh-3.5rem)] bg-[#0E1012] select-none font-sans">
       {/* Friendly Toolbar */}
@@ -686,6 +840,11 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
                     .filter((c) => !['SWITCH', 'LED', 'PROBE'].includes(c.type))
                     .map((c) => c.type)}
                   onExecuteAgenticAction={handleExecuteAgenticAction}
+                  onExecuteAutonomousGoal={handleExecuteAutonomousGoal}
+                  onCancelAutonomousTask={handleCancelAutonomousTask}
+                  isAgentRunning={isAgentRunning}
+                  agentActiveStep={agentActiveStep}
+                  agentPlan={agentPlan}
                 />
               )}
             </div>
