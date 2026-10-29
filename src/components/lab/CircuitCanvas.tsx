@@ -1,7 +1,7 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { CircuitComponent, Connection, SignalState } from '../../types';
 import { GateSymbol } from '../common/GateSymbol';
-import { Power, Check, AlertCircle } from 'lucide-react';
+import { Power, Check, AlertCircle, Trash2, X } from 'lucide-react';
 import { AgenticCursor, AgenticCursorState } from './AgenticCursor';
 
 interface CircuitCanvasProps {
@@ -12,6 +12,8 @@ interface CircuitCanvasProps {
   onUpdateComponentPosition: (id: string, x: number, y: number) => void;
   onConnectPorts: (fromCompId: string, fromPortId: string, toCompId: string, toPortId: string) => void;
   onToggleSwitch: (componentId: string) => void;
+  onDeleteComponent: (componentId: string) => void;
+  onDeleteConnection?: (wireId: string) => void;
   componentOutputs: Map<string, SignalState>;
   wireStates: Map<string, SignalState>;
   zoom: number;
@@ -27,6 +29,8 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
   onUpdateComponentPosition,
   onConnectPorts,
   onToggleSwitch,
+  onDeleteComponent,
+  onDeleteConnection,
   componentOutputs,
   wireStates,
   zoom,
@@ -37,6 +41,19 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
   const [pendingWireSource, setPendingWireSource] = useState<{ compId: string; portId: string; isOutput: boolean } | null>(null);
   const canvasRef = useRef<HTMLDivElement>(null);
+
+  // Keyboard shortcut: Delete or Backspace key to delete selected component
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if ((e.key === 'Delete' || e.key === 'Backspace') && selectedComponentId) {
+        if (['INPUT', 'TEXTAREA'].includes((e.target as HTMLElement).tagName)) return;
+        e.preventDefault();
+        onDeleteComponent(selectedComponentId);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedComponentId, onDeleteComponent]);
 
   // Helper to compute port center coordinates in SVG space
   const getPortCoords = (compId: string, portId: string, isOutput: boolean) => {
@@ -109,6 +126,8 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
     }
   };
 
+  const selectedComponent = components.find((c) => c.id === selectedComponentId);
+
   return (
     <div
       ref={canvasRef}
@@ -149,10 +168,27 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
 
             // Orthogonal routing midpoint
             const midX = (start.x + end.x) / 2;
+            const midY = (start.y + end.y) / 2;
             const pathData = `M ${start.x} ${start.y} L ${midX} ${start.y} L ${midX} ${end.y} L ${end.x} ${end.y}`;
 
             return (
-              <g key={wire.id}>
+              <g
+                key={wire.id}
+                className="cursor-pointer group pointer-events-auto"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDeleteConnection?.(wire.id);
+                }}
+              >
+                {/* Wide invisible path for effortless clicking */}
+                <path
+                  d={pathData}
+                  stroke="transparent"
+                  strokeWidth="16"
+                  fill="none"
+                  className="hover:stroke-red-500/30 transition-colors"
+                />
+
                 {/* Glow layer if HIGH */}
                 {isHigh && (
                   <path
@@ -164,6 +200,7 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                     filter="url(#glow-cyan)"
                   />
                 )}
+
                 {/* Primary signal wire */}
                 <path
                   d={pathData}
@@ -171,10 +208,22 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
                   strokeWidth="2.5"
                   fill="none"
                   strokeDasharray={isUndefined ? '4 3' : isHigh ? '8 4' : 'none'}
-                  className={isHigh ? 'animate-signal-flow' : ''}
+                  className={`${isHigh ? 'animate-signal-flow' : ''} group-hover:stroke-red-400 transition-colors`}
                 />
-                {/* Wire signal label tag at midpoint */}
-                <circle cx={midX} cy={(start.y + end.y) / 2} r="5" fill="#16191C" stroke={wireColor} strokeWidth="1.5" />
+
+                {/* Wire disconnect badge at midpoint */}
+                <g transform={`translate(${midX}, ${midY})`} className="group-hover:scale-125 transition-transform">
+                  <circle
+                    cx="0"
+                    cy="0"
+                    r="6"
+                    fill="#16191C"
+                    stroke={wireColor}
+                    strokeWidth="1.5"
+                    className="group-hover:stroke-red-400 group-hover:fill-red-950/80"
+                  />
+                  <title>Click wire to disconnect / delete</title>
+                </g>
               </g>
             );
           })}
@@ -193,16 +242,45 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
               onMouseDown={(e) => handleMouseDownComponent(e, comp.id)}
               className={`absolute z-20 rounded-bench border bg-[#16191C] shadow-instrument p-2.5 transition-shadow cursor-move ${
                 isSelected
-                  ? 'border-[#C6FF3D] ring-1 ring-[#C6FF3D] shadow-glow-accent'
+                  ? 'border-[#C6FF3D] ring-2 ring-[#C6FF3D]/40 shadow-glow-accent'
                   : comp.isFaulty
                   ? 'border-[#FF4D4D]'
                   : 'border-[#282E33] hover:border-[#525C64]'
               }`}
             >
-              {/* Component Header */}
+              {/* Floating Delete Pill on Selected Component */}
+              {isSelected && (
+                <div className="absolute -top-8 left-1/2 -translate-x-1/2 flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-[#1A1F26] border border-red-500/80 shadow-2xl z-30 animate-in fade-in zoom-in-95 duration-150">
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteComponent(comp.id);
+                    }}
+                    className="flex items-center gap-1 text-[10px] font-mono text-red-400 hover:text-red-300 font-bold whitespace-nowrap"
+                    title="Delete component (Del)"
+                  >
+                    <Trash2 className="w-3 h-3 text-red-400" />
+                    <span>Delete</span>
+                  </button>
+                </div>
+              )}
+
+              {/* Component Header with Direct Delete Button */}
               <div className="flex items-center justify-between pb-1.5 border-b border-[#282E33] mb-2 font-mono text-[10px]">
-                <span className="text-[#ECEBE4] font-bold truncate">{comp.label}</span>
-                <span className="text-[#646F77]">{comp.type}</span>
+                <span className="text-[#ECEBE4] font-bold truncate max-w-[62px]">{comp.label}</span>
+                <div className="flex items-center gap-1">
+                  <span className="text-[#646F77] text-[9px]">{comp.type}</span>
+                  <button
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onDeleteComponent(comp.id);
+                    }}
+                    className="p-1 rounded text-[#646F77] hover:text-red-400 hover:bg-red-500/20 transition-all opacity-70 hover:opacity-100"
+                    title="Delete component (Del)"
+                  >
+                    <Trash2 className="w-3 h-3" />
+                  </button>
+                </div>
               </div>
 
               {/* Component Visual Gate Symbol */}
@@ -311,6 +389,37 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
         <div className="absolute bottom-4 left-1/2 -translate-x-1/2 px-4 py-2 rounded-bench bg-[#16191C] border border-[#C6FF3D] text-[#C6FF3D] font-mono text-xs flex items-center gap-2 shadow-glow-accent z-40">
           <span className="w-2 h-2 rounded-full bg-[#C6FF3D] animate-ping" />
           <span>Select destination port to complete signal trace (or click canvas to cancel)</span>
+        </div>
+      )}
+
+      {/* Floating Selection Dock Bar (When Component is Selected) */}
+      {selectedComponent && (
+        <div className="absolute bottom-5 left-1/2 -translate-x-1/2 z-40 flex items-center gap-3 px-4 py-2 rounded-2xl bg-[#16191C]/95 border-2 border-[#C6FF3D] shadow-2xl backdrop-blur-md text-xs font-mono animate-in fade-in slide-in-from-bottom-2">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#C6FF3D] animate-ping" />
+            <span className="text-[#ECEBE4] font-bold">
+              {selectedComponent.label} ({selectedComponent.type})
+            </span>
+          </div>
+
+          <div className="h-4 w-px bg-[#282E33]" />
+
+          <button
+            onClick={() => onDeleteComponent(selectedComponent.id)}
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-red-500/20 border border-red-500/50 text-red-400 hover:bg-red-500 hover:text-white transition-all font-bold text-xs shadow-md"
+            title="Delete this component (Del / Backspace)"
+          >
+            <Trash2 className="w-3.5 h-3.5" />
+            <span>Delete (Del)</span>
+          </button>
+
+          <button
+            onClick={() => onSelectComponent(null)}
+            className="p-1 rounded-lg text-[#9CA3A8] hover:text-[#ECEBE4] hover:bg-[#282E33] transition-colors"
+            title="Deselect"
+          >
+            <X className="w-4 h-4" />
+          </button>
         </div>
       )}
     </div>

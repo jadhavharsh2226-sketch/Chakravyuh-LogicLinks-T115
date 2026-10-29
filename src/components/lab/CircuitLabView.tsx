@@ -10,6 +10,8 @@ import {
   Bot,
   Play,
   Layers,
+  Trash2,
+  PanelRight,
 } from 'lucide-react';
 import { CircuitComponent, Connection, ComponentType, SignalState } from '../../types';
 import { CircuitSimulator } from '../../engine/simulator';
@@ -105,6 +107,7 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
 
   const [selectedComponentId, setSelectedComponentId] = useState<string | null>(null);
   const [rightPanelTab, setRightPanelTab] = useState<'inspector' | 'mentor'>('mentor');
+  const [showRightPanel, setShowRightPanel] = useState<boolean>(true);
   const [zoom, setZoom] = useState<number>(1);
   const [isTruthTableOpen, setIsTruthTableOpen] = useState<boolean>(false);
   const [saveBanner, setSaveBanner] = useState<string | null>(null);
@@ -205,10 +208,23 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
   };
 
   const handleDeleteComponent = (compId: string) => {
+    sounds.playClick();
     setComponents((prev) => prev.filter((c) => c.id !== compId));
     setConnections((prev) =>
       prev.filter((w) => w.fromCompId !== compId && w.toCompId !== compId)
     );
+    setSelectedComponentId(null);
+  };
+
+  const handleDeleteConnection = (wireId: string) => {
+    sounds.playClick();
+    setConnections((prev) => prev.filter((w) => w.id !== wireId));
+  };
+
+  const handleClearCanvas = () => {
+    sounds.playClick();
+    setComponents([]);
+    setConnections([]);
     setSelectedComponentId(null);
   };
 
@@ -547,15 +563,38 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
           <button
             onClick={handleResetCircuit}
             className="p-2 rounded-lg text-[#9CA3A8] hover:text-[#ECEBE4] hover:bg-[#1D2125] transition-colors"
-            title="Reset circuit to start"
+            title="Reset circuit to default lesson"
           >
             <RotateCcw className="w-4 h-4" />
+          </button>
+
+          {/* Clear Canvas */}
+          <button
+            onClick={handleClearCanvas}
+            className="p-2 rounded-lg text-[#9CA3A8] hover:text-red-400 hover:bg-red-500/10 border border-transparent hover:border-red-500/30 transition-colors flex items-center gap-1"
+            title="Clear all components on canvas"
+          >
+            <Trash2 className="w-4 h-4 text-red-400" />
+            <span className="hidden lg:inline text-xs text-red-400">Clear</span>
           </button>
 
           {/* Save */}
           <BenchButton variant="primary" size="sm" onClick={handleSaveCircuit} icon={<Save className="w-3.5 h-3.5" />}>
             Save
           </BenchButton>
+
+          {/* Toggle Inspector / AI Sidebar */}
+          <button
+            onClick={() => setShowRightPanel(!showRightPanel)}
+            className={`p-2 rounded-lg border transition-all flex items-center gap-1 ${
+              showRightPanel
+                ? 'border-[#C6FF3D]/60 text-[#C6FF3D] bg-[#C6FF3D]/10'
+                : 'border-[#282E33] text-[#9CA3A8] hover:text-white'
+            }`}
+            title="Toggle Inspector / AI Panel"
+          >
+            <PanelRight className="w-4 h-4" />
+          </button>
         </div>
       </div>
 
@@ -583,6 +622,8 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
           onUpdateComponentPosition={handleUpdatePosition}
           onConnectPorts={handleConnectPorts}
           onToggleSwitch={handleToggleSwitch}
+          onDeleteComponent={handleDeleteComponent}
+          onDeleteConnection={handleDeleteConnection}
           componentOutputs={simResult.componentOutputs}
           wireStates={simResult.wireStates}
           zoom={zoom}
@@ -591,63 +632,65 @@ export const CircuitLabView: React.FC<CircuitLabViewProps> = ({
         />
 
         {/* Right Panel: Inspector + AI Study Buddy */}
-        <aside className="w-80 bg-[#16191C] border-l border-[#282E33] flex flex-col h-full">
-          {/* Tabs */}
-          <div className="flex items-center border-b border-[#282E33] bg-[#16191C] text-xs font-semibold">
-            <button
-              onClick={() => setRightPanelTab('mentor')}
-              className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 transition-colors border-b-2 ${
-                rightPanelTab === 'mentor'
-                  ? 'border-[#00E5FF] text-[#ECEBE4] bg-[#1D2125]/50'
-                  : 'border-transparent text-[#9CA3A8] hover:text-[#ECEBE4]'
-              }`}
-            >
-              <Bot className="w-4 h-4 text-[#00E5FF]" />
-              <span>Agentic AI Volt ⚡</span>
-            </button>
+        {showRightPanel && (
+          <aside className="w-80 flex-shrink-0 bg-[#16191C] border-l border-[#282E33] flex flex-col h-full z-20">
+            {/* Tabs */}
+            <div className="flex items-center border-b border-[#282E33] bg-[#16191C] text-xs font-semibold">
+              <button
+                onClick={() => setRightPanelTab('inspector')}
+                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 transition-colors border-b-2 ${
+                  rightPanelTab === 'inspector'
+                    ? 'border-[#C6FF3D] text-[#ECEBE4] bg-[#1D2125]/50'
+                    : 'border-transparent text-[#9CA3A8] hover:text-[#ECEBE4]'
+                }`}
+              >
+                <Sliders className="w-4 h-4 text-[#C6FF3D]" />
+                <span>Inspector</span>
+              </button>
 
-            <button
-              onClick={() => setRightPanelTab('inspector')}
-              className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 transition-colors border-b-2 ${
-                rightPanelTab === 'inspector'
-                  ? 'border-[#C6FF3D] text-[#ECEBE4] bg-[#1D2125]/50'
-                  : 'border-transparent text-[#9CA3A8] hover:text-[#ECEBE4]'
-              }`}
-            >
-              <Sliders className="w-4 h-4" />
-              <span>Inspector</span>
-            </button>
-          </div>
+              <button
+                onClick={() => setRightPanelTab('mentor')}
+                className={`flex-1 py-3 px-3 flex items-center justify-center gap-1.5 transition-colors border-b-2 ${
+                  rightPanelTab === 'mentor'
+                    ? 'border-[#00E5FF] text-[#ECEBE4] bg-[#1D2125]/50'
+                    : 'border-transparent text-[#9CA3A8] hover:text-[#ECEBE4]'
+                }`}
+              >
+                <Bot className="w-4 h-4 text-[#00E5FF]" />
+                <span>Agentic AI Volt ⚡</span>
+              </button>
+            </div>
 
-          <div className="flex-1 overflow-y-auto">
-            {rightPanelTab === 'inspector' ? (
-              <InspectorPanel
-                selectedComponent={selectedComponent}
-                connections={connections}
-                componentOutputs={simResult.componentOutputs}
-                wireStates={simResult.wireStates}
-                onToggleSwitch={handleToggleSwitch}
-                onDeleteComponent={handleDeleteComponent}
-                totalComponents={components.length}
-                totalConnections={connections.length}
-              />
-            ) : (
-              <AIMentorPanel
-                validationReport={validationReport}
-                activeMissionTitle={activeMission.title}
-                studentProfile={studentProfile}
-                componentsCount={components.length}
-                switchesState={components
-                  .filter((c) => c.type === 'SWITCH')
-                  .reduce((acc, c) => ({ ...acc, [c.label]: !!c.state.toggle }), {})}
-                activeGates={components
-                  .filter((c) => !['SWITCH', 'LED', 'PROBE'].includes(c.type))
-                  .map((c) => c.type)}
-                onExecuteAgenticAction={handleExecuteAgenticAction}
-              />
-            )}
-          </div>
-        </aside>
+            <div className="flex-1 overflow-y-auto">
+              {rightPanelTab === 'inspector' ? (
+                <InspectorPanel
+                  selectedComponent={selectedComponent}
+                  connections={connections}
+                  componentOutputs={simResult.componentOutputs}
+                  wireStates={simResult.wireStates}
+                  onToggleSwitch={handleToggleSwitch}
+                  onDeleteComponent={handleDeleteComponent}
+                  totalComponents={components.length}
+                  totalConnections={connections.length}
+                />
+              ) : (
+                <AIMentorPanel
+                  validationReport={validationReport}
+                  activeMissionTitle={activeMission.title}
+                  studentProfile={studentProfile}
+                  componentsCount={components.length}
+                  switchesState={components
+                    .filter((c) => c.type === 'SWITCH')
+                    .reduce((acc, c) => ({ ...acc, [c.label]: !!c.state.toggle }), {})}
+                  activeGates={components
+                    .filter((c) => !['SWITCH', 'LED', 'PROBE'].includes(c.type))
+                    .map((c) => c.type)}
+                  onExecuteAgenticAction={handleExecuteAgenticAction}
+                />
+              )}
+            </div>
+          </aside>
+        )}
       </div>
 
       {/* Truth Table Modal */}
