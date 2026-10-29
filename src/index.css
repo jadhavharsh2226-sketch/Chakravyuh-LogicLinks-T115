@@ -1,0 +1,73 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --bg-color: #0E1012;
+    --surface-color: #16191C;
+    --border-color: #282E33;
+    --accent-color: #C6FF3D;
+    --signal-high: #3DDCFF;
+    --signal-low: #525C64;
+    --danger-color: #FF4D4D;
+  }
+
+  body {
+    background-color: #0E1012;
+    color: #ECEBE4;
+    font-feature-settings: "cv02", "cv03", "cv04", "cv11";
+  }
+
+  /* Custom scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: #0E1012;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #282E33;
+    border-radius: 3px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #525C64;
+  }
+}
+
+/* Precision laboratory grid pattern */
+.bg-bench-grid {
+  background-image: 
+    linear-gradient(to right, rgba(40, 46, 51, 0.4) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(40, 46, 51, 0.4) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.bg-bench-grid-subtle {
+  background-image: 
+    linear-gradient(to right, rgba(40, 46, 51, 0.2) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(40, 46, 51, 0.2) 1px, transparent 1px);
+  background-size: 16px 16px;
+}
+
+/* Lenis smooth scroll classes */
+html.lenis, html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+.lenis.lenis-scrolling iframe {
+  pointer-events: none;
+}
