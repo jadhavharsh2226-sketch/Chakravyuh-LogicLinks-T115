@@ -1,11 +1,10 @@
 import React, { useState } from 'react';
-import { motion, AnimatePresence } from 'lucide-react';
 import { Volt3DCanvas } from './Volt3DCanvas';
 import { VoltExpression } from './VoltCharacter';
 import { sounds } from '../../services/soundEffects';
 import { StudentProfile } from '../../types/student';
 import { UNIVERSITY_SYLLABI } from '../../services/syllabusData';
-import { MessageSquare, Sparkles, X, Smile, Trophy, Minimize2, Maximize2 } from 'lucide-react';
+import { MessageSquare, Sparkles, X, Smile, Trophy, ChevronDown } from 'lucide-react';
 
 interface FloatingVoltCompanionProps {
   currentView: string;
@@ -44,8 +43,8 @@ export const FloatingVoltCompanion: React.FC<FloatingVoltCompanionProps> = ({
     setBubbleText(randomJoke);
   };
 
-  // Don't show in full login view to avoid doubling the mascot on login screen
-  if (currentView === 'login') return null;
+  // Don't show in login view or circuit lab to keep workbench completely distraction-free
+  if (currentView === 'login' || currentView === 'lab') return null;
 
   return (
     <div className="fixed bottom-5 right-5 z-50 flex flex-col items-end select-none font-sans pointer-events-auto">

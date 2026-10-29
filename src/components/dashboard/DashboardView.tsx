@@ -1,18 +1,14 @@
 import React from 'react';
 import {
-  ArrowUpRight,
-  Plus,
   Play,
   Sparkles,
-  Trophy,
   Flame,
   Heart,
-  BookOpen,
   GraduationCap,
-  Sliders,
-  CheckCircle2,
   Shield,
   Code2,
+  Cpu,
+  ArrowRight,
 } from 'lucide-react';
 import { BenchButton } from '../common/BenchButton';
 import { VoltCharacter } from '../common/VoltCharacter';
@@ -33,26 +29,29 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
   studentProfile,
   onOpenSyllabusModal,
 }) => {
-  const syllabus = UNIVERSITY_SYLLABI[studentProfile.track] || UNIVERSITY_SYLLABI.BCA_YEAR_1;
+  const syllabus = UNIVERSITY_SYLLABI[studentProfile.track] || UNIVERSITY_SYLLABI.ENTC_SEMESTER_1_2;
 
   return (
-    <div className="p-6 md:p-10 max-w-6xl mx-auto space-y-8 select-none font-sans">
-      {/* Top Duolingo Gamification Bar: Streaks, Hearts, Course, Switch Button */}
-      <div className="rounded-3xl border-2 border-[#282E33] bg-[#16191C] p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl">
-        <div className="flex items-center gap-5 w-full md:w-auto">
-          {/* Volt Mascot */}
+    <div className="p-4 sm:p-8 max-w-5xl mx-auto space-y-8 select-none font-sans text-xs">
+      
+      {/* 1. Top Student Welcome Bar with 3D Mascot */}
+      <div className="rounded-3xl border border-[#22282F] bg-[#12161A] p-6 flex flex-col md:flex-row items-center justify-between gap-6 shadow-xl relative overflow-hidden">
+        {/* Subtle background ambient glow */}
+        <div className="absolute top-0 right-0 w-64 h-64 bg-[#C6FF3D]/5 rounded-full blur-3xl pointer-events-none" />
+
+        <div className="flex items-center gap-5 w-full md:w-auto z-10">
           <VoltCharacter
             expression="happy"
-            size="lg"
-            speechText={`Welcome back! Ready for ${syllabus.yearName}?`}
+            size="md"
+            speechText={`Welcome back, ${studentProfile.name.split(' ')[0]}! Ready for ${syllabus.yearName}?`}
           />
 
           <div>
             <div className="flex items-center gap-2">
-              <span className="font-display text-2xl font-bold text-[#ECEBE4]">
+              <h1 className="font-display text-2xl font-bold text-[#ECEBE4]">
                 Hey, {studentProfile.name}! 👋
-              </span>
-              <span className="px-2.5 py-0.5 rounded-full bg-[#C6FF3D]/10 text-[#C6FF3D] border border-[#C6FF3D]/30 font-mono text-xs font-bold">
+              </h1>
+              <span className="px-2.5 py-0.5 rounded-full bg-[#C6FF3D]/10 text-[#C6FF3D] border border-[#C6FF3D]/30 font-mono text-[11px] font-bold">
                 Level {studentProfile.level} {studentProfile.levelTitle}
               </span>
             </div>
@@ -71,266 +70,193 @@ export const DashboardView: React.FC<DashboardViewProps> = ({
               className="mt-2 text-xs text-[#C6FF3D] hover:underline flex items-center gap-1 font-semibold"
             >
               <GraduationCap className="w-3.5 h-3.5" />
-              <span>Change Course / Year Syllabus</span>
+              <span>Change Syllabus ›</span>
             </button>
           </div>
         </div>
 
-        {/* Duolingo Gamification Stats (Streaks, Hearts, XP) */}
-        <div className="flex items-center gap-4 bg-[#0E1012] p-3 rounded-2xl border border-[#282E33] shrink-0 font-mono text-xs">
+        {/* Gamification Stats: Streak, Hearts, XP */}
+        <div className="flex items-center gap-3 bg-[#0A0D10] p-2.5 rounded-2xl border border-[#22282F] shrink-0 font-mono text-xs z-10">
           {/* Streak */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1D2125] text-[#FFB020] font-bold">
-            <Flame className="w-5 h-5 text-[#FFB020] animate-bounce" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161C22] text-[#FFB020] font-bold" title="Daily Learning Streak">
+            <Flame className="w-4 h-4 text-[#FFB020] fill-current animate-pulse" />
             <span>{studentProfile.streakDays} Day Streak!</span>
           </div>
 
           {/* Hearts */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1D2125] text-[#FF4D4D] font-bold">
-            <Heart className="w-5 h-5 text-[#FF4D4D] fill-current" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161C22] text-[#FF4D4D] font-bold" title="Available Lives">
+            <Heart className="w-4 h-4 text-[#FF4D4D] fill-current" />
             <span>{studentProfile.hearts}/5</span>
           </div>
 
           {/* XP */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#1D2125] text-[#C6FF3D] font-bold">
-            <Sparkles className="w-5 h-5 text-[#C6FF3D]" />
+          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl bg-[#161C22] text-[#C6FF3D] font-bold" title="Total XP Points">
+            <Sparkles className="w-4 h-4 text-[#C6FF3D]" />
             <span>{studentProfile.xp} XP</span>
           </div>
         </div>
       </div>
 
-      {/* Main Grid: Active Lesson + Syllabus Path */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-        {/* Active Lesson Card (7 cols) */}
-        <div className="lg:col-span-7 rounded-3xl border border-[#282E33] bg-[#16191C] p-6 sm:p-8 flex flex-col justify-between shadow-lg">
-          <div>
-            <div className="flex items-center justify-between mb-4">
-              <span className="text-xs font-mono font-bold text-[#C6FF3D]">
-                TODAY'S BITE-SIZED LESSON
-              </span>
-              <span className="px-3 py-1 rounded-full bg-[#1D2125] border border-[#282E33] text-xs font-mono text-[#3DDCFF] font-semibold">
-                5 Mins Daily Goal
-              </span>
-            </div>
-
-            <h2 className="font-display text-2xl font-bold text-[#ECEBE4] mb-2">
-              Staircase 2-Way Light Switch (XOR Gate)
-            </h2>
-
-            <p className="text-sm text-[#9CA3A8] leading-relaxed mb-6">
-              Learn how household switches control the same light bulb from both the bottom and top of the stairs using XOR logic!
-            </p>
-
-            {/* Progress bar */}
-            <div className="space-y-2 mb-6">
-              <div className="flex items-center justify-between text-xs font-mono">
-                <span className="text-[#9CA3A8]">Lesson Progress:</span>
-                <span className="text-[#C6FF3D] font-bold">50% Completed</span>
-              </div>
-              <div className="w-full h-3 rounded-full bg-[#0E1012] overflow-hidden border border-[#282E33]">
-                <div className="h-full bg-[#C6FF3D] rounded-full w-1/2 transition-all" />
-              </div>
-            </div>
-          </div>
-
-          <div className="flex items-center gap-3 pt-4 border-t border-[#282E33]">
-            <BenchButton
-              variant="primary"
-              size="lg"
-              onClick={() => onSelectMission('mission-002')}
-              icon={<Play className="w-4 h-4 fill-current" />}
-              className="w-full sm:w-auto"
-            >
-              Continue Lesson (+150 XP) 🚀
-            </BenchButton>
-
-            <BenchButton
-              variant="secondary"
-              size="lg"
-              onClick={() => onNavigate('lab')}
-              icon={<Plus className="w-4 h-4" />}
-            >
-              Open Blank Canvas
-            </BenchButton>
-          </div>
+      {/* 2. The Three Core Engineering Hubs (With Authentic Hardware Imagery) */}
+      <div className="space-y-3">
+        <div className="flex items-center justify-between">
+          <span className="font-mono text-[11px] text-[#C6FF3D] font-bold uppercase tracking-wider">
+            WORKBENCH SELECTION
+          </span>
+          <span className="text-[11px] text-[#646F77] font-mono">
+            3 Hardware Environments
+          </span>
         </div>
 
-        {/* Quick Puzzle Card (5 cols) */}
-        <div className="lg:col-span-5 rounded-3xl border border-[#282E33] bg-[#16191C] p-6 sm:p-8 flex flex-col justify-between shadow-lg">
-          <div>
-            <div className="flex items-center justify-between mb-3">
-              <span className="text-xs font-mono font-bold text-[#FFB020]">
-                CIRCUIT PUZZLE ARENA
-              </span>
-              <span className="text-xs font-mono text-[#ECEBE4] font-bold">
-                Puzzle #1
-              </span>
-            </div>
-
-            <h3 className="font-display text-xl font-bold text-[#ECEBE4] mb-2">
-              The Stubborn Light Switch
-            </h3>
-
-            <p className="text-xs text-[#9CA3A8] leading-relaxed mb-4">
-              Someone wired the wrong gate into a circuit. Can you test the switches, spot the bug, and repair it?
-            </p>
-
-            <div className="p-3 rounded-2xl bg-[#0E1012] border border-[#282E33] text-xs font-mono text-[#3DDCFF] mb-4">
-              Reward: +250 XP • No hearts lost on first try!
-            </div>
-          </div>
-
-          <BenchButton
-            variant="accent"
-            size="md"
-            onClick={() => onNavigate('fault-arena')}
-            className="w-full"
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5">
+          {/* Hub 1: Logic Gate Playground */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('lab');
+            }}
+            className="group rounded-3xl border border-[#22282F] bg-[#12161A] overflow-hidden hover:border-[#00E5FF] transition-all cursor-pointer flex flex-col justify-between shadow-xl"
           >
-            Play Circuit Puzzle 🧩
-          </BenchButton>
-        </div>
-
-        {/* Feature Highlights: CHAKRAVYUH Challenge & Arduino Embedded Lab (12 cols) */}
-        <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 gap-5">
-          {/* CHAKRAVYUH Challenge */}
-          <div className="p-6 rounded-3xl bg-gradient-to-br from-[#16191C] to-[#12161A] border-2 border-[#C6FF3D]/40 hover:border-[#C6FF3D] transition-all flex flex-col justify-between shadow-xl">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-2xl bg-[#0E1012] border border-[#C6FF3D] flex items-center justify-center text-[#C6FF3D]">
-                  <Shield className="w-5 h-5" />
-                </div>
-                <span className="px-3 py-1 rounded-full bg-[#C6FF3D]/10 text-[#C6FF3D] font-mono text-[11px] font-bold">
-                  HACKATHON EDITION
-                </span>
+            <div className="h-36 relative overflow-hidden">
+              <img
+                src="/images/circuit-board.jpg"
+                alt="Circuit Board"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60 group-hover:opacity-85"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 border border-[#22282F] text-[10px] font-mono text-[#00E5FF] font-bold">
+                <Cpu className="w-3 h-3" />
+                <span>LOGIC BENCH</span>
               </div>
-              <h3 className="font-display text-xl font-bold text-[#ECEBE4]">
+            </div>
+
+            <div className="p-5 space-y-2">
+              <h3 className="font-display text-base font-bold text-[#ECEBE4] group-hover:text-[#00E5FF] transition-colors">
+                Circuit Playground
+              </h3>
+              <p className="text-[11px] text-[#9CA3A8] leading-relaxed">
+                Connect logic gates, toggle SPDT switches, and inspect real-time signal truth tables.
+              </p>
+              <div className="pt-2 text-[11px] font-mono font-bold text-[#00E5FF] flex items-center gap-1">
+                <span>Open Playground</span>
+                <span>›</span>
+              </div>
+            </div>
+          </div>
+
+          {/* Hub 2: CHAKRAVYUH Arena */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('chakravyuha');
+            }}
+            className="group rounded-3xl border-2 border-[#C6FF3D]/40 bg-[#12161A] overflow-hidden hover:border-[#C6FF3D] transition-all cursor-pointer flex flex-col justify-between shadow-xl"
+          >
+            <div className="h-36 relative overflow-hidden">
+              <img
+                src="/images/oscilloscope.jpg"
+                alt="Oscilloscope Glitch Hunting"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60 group-hover:opacity-85"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 border border-[#C6FF3D]/40 text-[10px] font-mono text-[#C6FF3D] font-bold">
+                <Shield className="w-3 h-3" />
+                <span>HACKATHON 2026</span>
+              </div>
+            </div>
+
+            <div className="p-5 space-y-2">
+              <h3 className="font-display text-base font-bold text-[#ECEBE4] group-hover:text-[#C6FF3D] transition-colors">
                 CHAKRAVYUH Arena
               </h3>
-              <p className="text-xs text-[#9CA3A8] leading-relaxed">
-                Breach the 3-layer electronic maze against the timer! Disarm Padmavyuha's boolean lock, troubleshoot Karmavyuha's faulty 4:1 MUX, and synchronize the ATmega core PWM handshake.
+              <p className="text-[11px] text-[#9CA3A8] leading-relaxed">
+                Breach the 3-layer electronic maze against the timer: Padmavyuha, Karmavyuha, and Core!
               </p>
-            </div>
-            <div className="pt-5">
-              <BenchButton
-                variant="primary"
-                size="md"
-                onClick={() => onNavigate('chakravyuha')}
-                icon={<Shield className="w-4 h-4 text-[#0E1012]" />}
-                className="w-full"
-              >
-                Enter CHAKRAVYUH Arena ⚡ (+500 XP)
-              </BenchButton>
+              <div className="pt-2 text-[11px] font-mono font-bold text-[#C6FF3D] flex items-center gap-1">
+                <span>Enter Arena (+500 XP)</span>
+                <span>›</span>
+              </div>
             </div>
           </div>
 
-          {/* Arduino Code Lab */}
-          <div className="p-6 rounded-3xl bg-gradient-to-br from-[#16191C] to-[#12161A] border-2 border-[#3DDCFF]/40 hover:border-[#3DDCFF] transition-all flex flex-col justify-between shadow-xl">
-            <div className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div className="w-10 h-10 rounded-2xl bg-[#0E1012] border border-[#3DDCFF] flex items-center justify-center text-[#3DDCFF]">
-                  <Code2 className="w-5 h-5" />
-                </div>
-                <span className="px-3 py-1 rounded-full bg-[#3DDCFF]/10 text-[#3DDCFF] font-mono text-[11px] font-bold">
-                  EMBEDDED C LAB
-                </span>
+          {/* Hub 3: Arduino Embedded C Lab */}
+          <div
+            onClick={() => {
+              sounds.playClick();
+              onNavigate('code-lab');
+            }}
+            className="group rounded-3xl border border-[#22282F] bg-[#12161A] overflow-hidden hover:border-[#3DDCFF] transition-all cursor-pointer flex flex-col justify-between shadow-xl"
+          >
+            <div className="h-36 relative overflow-hidden">
+              <img
+                src="/images/breadboard.jpg"
+                alt="Breadboard Prototyping"
+                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-60 group-hover:opacity-85"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
+              <div className="absolute top-3 left-3 flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 border border-[#22282F] text-[10px] font-mono text-[#3DDCFF] font-bold">
+                <Code2 className="w-3 h-3" />
+                <span>EMBEDDED C</span>
               </div>
-              <h3 className="font-display text-xl font-bold text-[#ECEBE4]">
+            </div>
+
+            <div className="p-5 space-y-2">
+              <h3 className="font-display text-base font-bold text-[#ECEBE4] group-hover:text-[#3DDCFF] transition-colors">
                 Arduino Microcontroller Lab
               </h3>
-              <p className="text-xs text-[#9CA3A8] leading-relaxed">
-                Write AVR C code, flash the virtual ATmega328P target, and see live Pin 13 LED output and digital pushbuttons respond synchronously.
+              <p className="text-[11px] text-[#9CA3A8] leading-relaxed">
+                Write AVR C code, flash the virtual ATmega328P target, and test live GPIO Pin 13 LED output.
               </p>
-            </div>
-            <div className="pt-5">
-              <BenchButton
-                variant="secondary"
-                size="md"
-                onClick={() => onNavigate('code-lab')}
-                icon={<Code2 className="w-4 h-4" />}
-                className="w-full"
-              >
-                Open Arduino Code Lab 💻
-              </BenchButton>
-            </div>
-          </div>
-        </div>
-
-        {/* Real Syllabus Roadmap (Duolingo Learning Path) (12 cols) */}
-        <div className="lg:col-span-12 rounded-3xl border border-[#282E33] bg-[#16191C] p-6 sm:p-8 space-y-6 shadow-xl">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between pb-4 border-b border-[#282E33] gap-2">
-            <div>
-              <span className="text-xs font-mono text-[#C6FF3D] font-bold uppercase tracking-wider block mb-1">
-                OFFICIAL COLLEGE SYLLABUS ROADMAP
-              </span>
-              <h3 className="font-display text-xl font-bold text-[#ECEBE4]">
-                {syllabus.courseName} ({syllabus.yearName})
-              </h3>
-            </div>
-
-            <button
-              onClick={onOpenSyllabusModal}
-              className="text-xs font-mono text-[#3DDCFF] hover:underline"
-            >
-              Switch Syllabus ›
-            </button>
-          </div>
-
-          {/* Unit Sections */}
-          <div className="space-y-6">
-            {syllabus.units.map((unit) => (
-              <div key={unit.id} className="p-5 rounded-2xl bg-[#0E1012] border border-[#282E33] space-y-4">
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-[#282E33] pb-3">
-                  <div>
-                    <h4 className="font-bold text-sm text-[#ECEBE4]">
-                      {unit.title}
-                    </h4>
-                    <p className="text-xs text-[#9CA3A8] mt-0.5">
-                      {unit.description}
-                    </p>
-                  </div>
-                  <span className="px-2.5 py-1 rounded-full bg-[#1D2125] text-xs font-mono text-[#C6FF3D] font-bold shrink-0">
-                    {unit.examWeight}
-                  </span>
-                </div>
-
-                {/* Topics in this unit */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
-                  {unit.topics.map((topic) => (
-                    <div
-                      key={topic.id}
-                      onClick={() => onNavigate('lab')}
-                      className={`p-3.5 rounded-xl border transition-all cursor-pointer flex flex-col justify-between ${
-                        topic.isCompleted
-                          ? 'border-[#C6FF3D]/40 bg-[#16191C] hover:border-[#C6FF3D]'
-                          : 'border-[#282E33] bg-[#16191C]/60 hover:border-[#525C64]'
-                      }`}
-                    >
-                      <div>
-                        <div className="flex items-center justify-between text-xs mb-1">
-                          <span className="font-bold text-[#ECEBE4] truncate">
-                            {topic.title}
-                          </span>
-                          {topic.isCompleted ? (
-                            <span className="text-[#C6FF3D] font-bold text-xs shrink-0">✓</span>
-                          ) : (
-                            <span className="text-[10px] text-[#9CA3A8] font-mono shrink-0">+{topic.xp} XP</span>
-                          )}
-                        </div>
-                        <p className="text-[11px] text-[#9CA3A8] line-clamp-2">
-                          {topic.ruleSummary}
-                        </p>
-                      </div>
-
-                      <div className="mt-3 pt-2 border-t border-[#282E33] text-[10px] font-mono text-[#3DDCFF] font-semibold">
-                        {topic.isCompleted ? 'Completed • Review Again' : 'Practice in Lab ›'}
-                      </div>
-                    </div>
-                  ))}
-                </div>
+              <div className="pt-2 text-[11px] font-mono font-bold text-[#3DDCFF] flex items-center gap-1">
+                <span>Open Code Lab</span>
+                <span>›</span>
               </div>
-            ))}
+            </div>
           </div>
         </div>
       </div>
+
+      {/* 3. Today's Recommended Lesson (Focused, Single Card — No Overflow) */}
+      <div className="rounded-3xl border border-[#22282F] bg-[#12161A] p-6 sm:p-7 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-6 shadow-xl">
+        <div className="space-y-2 max-w-xl">
+          <div className="flex items-center gap-2">
+            <span className="font-mono text-[10px] text-[#C6FF3D] font-bold uppercase tracking-wider">
+              CONTINUE LEARNING
+            </span>
+            <span className="px-2 py-0.5 rounded-full bg-[#161C22] text-[#3DDCFF] font-mono text-[10px]">
+              5 Mins Daily Goal
+            </span>
+          </div>
+
+          <h3 className="font-display text-xl font-bold text-[#ECEBE4]">
+            Staircase 2-Way Light Switch (XOR Gate)
+          </h3>
+
+          <p className="text-xs text-[#9CA3A8] leading-relaxed">
+            Understand how electrical switches at the top and bottom of a staircase control the same light bulb using binary parity logic.
+          </p>
+
+          <div className="pt-1 flex items-center gap-4 text-[11px] font-mono text-[#646F77]">
+            <span>Unit: {syllabus.units[0]?.title || 'Fundamental Logic'}</span>
+            <span>•</span>
+            <span className="text-[#C6FF3D] font-bold">+150 XP Reward</span>
+          </div>
+        </div>
+
+        <div className="shrink-0 w-full sm:w-auto">
+          <BenchButton
+            variant="primary"
+            size="lg"
+            onClick={() => onSelectMission('mission-002')}
+            icon={<ArrowRight className="w-4 h-4" />}
+            iconPosition="right"
+            className="w-full sm:w-auto"
+          >
+            Continue Lesson ➔
+          </BenchButton>
+        </div>
+      </div>
+
     </div>
   );
 };

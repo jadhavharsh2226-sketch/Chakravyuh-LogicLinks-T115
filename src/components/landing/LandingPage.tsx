@@ -1,12 +1,18 @@
-import React, { useEffect, useRef, useState } from 'react';
-import Lenis from 'lenis';
-import gsap from 'gsap';
-import { ArrowUpRight, Cpu, Sparkles, BookOpen, Wrench, CheckCircle2, Play, Shield, Code2 } from 'lucide-react';
+import React, { useState } from 'react';
+import {
+  ArrowUpRight,
+  Cpu,
+  Sparkles,
+  Shield,
+  Code2,
+  Play,
+  CheckCircle2,
+  Layers,
+  ArrowRight,
+  Flame,
+} from 'lucide-react';
 import { HeroInteractiveCircuit } from './HeroInteractiveCircuit';
-import { ProofOfInteraction } from './ProofOfInteraction';
-import { MissionGallery } from './MissionGallery';
-import { AIMentorShowcase } from './AIMentorShowcase';
-import { LandingFooter } from './LandingFooter';
+import { VoltCharacter } from '../common/VoltCharacter';
 import { BenchButton } from '../common/BenchButton';
 
 interface LandingPageProps {
@@ -18,79 +24,30 @@ export const LandingPage: React.FC<LandingPageProps> = ({
   onNavigate,
   onSelectMission,
 }) => {
-  const [scrolled, setScrolled] = useState(false);
-  const heroRef = useRef<HTMLDivElement>(null);
-  const headlineRef = useRef<HTMLHeadingElement>(null);
-  const eyebrowRef = useRef<HTMLDivElement>(null);
-  const copyRef = useRef<HTMLParagraphElement>(null);
-  const ctaRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    const lenis = new Lenis({
-      duration: 1.2,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
-    });
-
-    let rafId: number;
-    function raf(time: number) {
-      lenis.raf(time);
-      rafId = requestAnimationFrame(raf);
-    }
-    rafId = requestAnimationFrame(raf);
-
-    const handleScroll = () => {
-      setScrolled(window.scrollY > 20);
-    };
-    window.addEventListener('scroll', handleScroll, { passive: true });
-
-    const ctx = gsap.context(() => {
-      const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-
-      tl.from(eyebrowRef.current, { opacity: 0, y: -12, duration: 0.6 })
-        .from(headlineRef.current, { opacity: 0, y: 24, duration: 0.8 }, '-=0.3')
-        .from(copyRef.current, { opacity: 0, y: 16, duration: 0.6 }, '-=0.4')
-        .from(ctaRef.current, { opacity: 0, y: 12, duration: 0.5 }, '-=0.3');
-    }, heroRef);
-
-    return () => {
-      cancelAnimationFrame(rafId);
-      lenis.destroy();
-      window.removeEventListener('scroll', handleScroll);
-      ctx.revert();
-    };
-  }, []);
-
   return (
-    <div className="min-h-screen bg-[#0E1012] text-[#ECEBE4] selection:bg-[#C6FF3D] selection:text-[#0E1012] flex flex-col font-sans">
-      {/* Friendly, Clean Sticky Header */}
-      <header
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-200 ${
-          scrolled
-            ? 'bg-[#0E1012]/90 backdrop-blur-md border-b border-[#282E33] py-3'
-            : 'bg-transparent border-b border-transparent py-5'
-        }`}
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 flex items-center justify-between">
+    <div className="min-h-screen bg-[#0A0D10] text-[#ECEBE4] selection:bg-[#C6FF3D] selection:text-[#0A0D10] font-sans antialiased flex flex-col">
+      {/* 1. Sleek Navigation Header */}
+      <header className="sticky top-0 z-50 bg-[#0A0D10]/85 backdrop-blur-xl border-b border-[#20262D] px-4 sm:px-8 py-3.5 select-none">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
           {/* Logo */}
           <div
             onClick={() => onNavigate('landing')}
-            className="flex items-center gap-2.5 cursor-pointer select-none group"
+            className="flex items-center gap-3 cursor-pointer group"
           >
-            <div className="w-9 h-9 rounded-xl bg-[#16191C] border border-[#282E33] group-hover:border-[#C6FF3D] transition-colors flex items-center justify-center text-[#C6FF3D]">
-              <Cpu className="w-5 h-5" />
+            <div className="w-8 h-8 rounded-xl bg-[#12161A] border border-[#232A31] group-hover:border-[#C6FF3D] transition-colors flex items-center justify-center text-[#C6FF3D]">
+              <Cpu className="w-4 h-4" />
             </div>
             <div className="flex flex-col">
-              <span className="font-display text-base font-bold tracking-tight text-[#ECEBE4]">
+              <span className="font-display text-sm font-bold tracking-tight text-[#ECEBE4]">
                 CircuitVerse <span className="text-[#C6FF3D]">AI</span>
               </span>
-              <span className="text-[10px] text-[#9CA3A8] font-mono">
-                Digital Logic Made Simple
+              <span className="text-[10px] text-[#646F77] font-mono leading-none">
+                Smart E&TC Platform
               </span>
             </div>
           </div>
 
-          {/* Simple Navigation Links */}
+          {/* Core Navigation Links */}
           <nav className="hidden md:flex items-center gap-6 text-xs font-mono text-[#9CA3A8]">
             <button
               onClick={() => onNavigate('chakravyuha')}
@@ -100,28 +57,16 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               <span>CHAKRAVYUH 2026</span>
             </button>
             <button
+              onClick={() => onNavigate('lab')}
+              className="hover:text-[#ECEBE4] transition-colors"
+            >
+              Virtual Lab
+            </button>
+            <button
               onClick={() => onNavigate('code-lab')}
               className="hover:text-[#ECEBE4] transition-colors"
             >
               Arduino Lab
-            </button>
-            <button
-              onClick={() => onNavigate('lab')}
-              className="hover:text-[#ECEBE4] transition-colors"
-            >
-              Playground (Lab)
-            </button>
-            <button
-              onClick={() => onNavigate('fault-arena')}
-              className="hover:text-[#ECEBE4] transition-colors"
-            >
-              Circuit Puzzles
-            </button>
-            <button
-              onClick={() => onNavigate('missions')}
-              className="hover:text-[#ECEBE4] transition-colors"
-            >
-              Lessons
             </button>
             <button
               onClick={() => onNavigate('dashboard')}
@@ -131,11 +76,11 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </button>
           </nav>
 
-          {/* Primary CTA Button */}
+          {/* Action CTAs */}
           <div className="flex items-center gap-3">
             <button
               onClick={() => onNavigate('login')}
-              className="text-xs font-mono text-[#C6FF3D] hover:underline font-bold px-2 py-1 rounded-lg border border-[#C6FF3D]/30 bg-[#C6FF3D]/10"
+              className="px-3.5 py-1.5 rounded-xl border border-[#C6FF3D]/40 bg-[#C6FF3D]/10 text-[#C6FF3D] font-mono text-xs font-bold hover:bg-[#C6FF3D] hover:text-[#0A0D10] transition-all"
             >
               Student Login ⚡
             </button>
@@ -146,131 +91,248 @@ export const LandingPage: React.FC<LandingPageProps> = ({
               icon={<ArrowUpRight className="w-4 h-4" />}
               iconPosition="right"
             >
-              Open Playground
+              Open Lab
             </BenchButton>
           </div>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <section
-        ref={heroRef}
-        className="pt-28 pb-16 sm:pt-36 sm:pb-24 relative overflow-hidden bg-bench-grid"
-      >
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 relative z-10">
-          <div className="grid grid-cols-1 lg:grid-cols-12 gap-10 items-center">
-            {/* Left Column: Clear, Friendly Student Copy */}
+      {/* 2. Hero Section: Editorial & High-Contrast with 3D Mascot */}
+      <section className="pt-16 pb-20 sm:pt-24 sm:pb-28 relative overflow-hidden bg-[radial-gradient(ellipse_80%_80%_at_50%_-20%,rgba(0,229,255,0.12),rgba(255,255,255,0))]">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8 relative z-10">
+          <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center">
+            
+            {/* Left Column: Clean Editorial Copy */}
             <div className="lg:col-span-6 flex flex-col items-start text-left">
-              {/* Eyebrow */}
-              <div
-                ref={eyebrowRef}
-                className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#16191C] border border-[#282E33]"
-              >
+              <div className="mb-4 inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12161A] border border-[#22282F]">
                 <span className="w-2 h-2 rounded-full bg-[#C6FF3D] animate-ping" />
-                <span className="font-mono text-xs font-semibold text-[#ECEBE4]">
-                  SMART ENTC LEARNING PLATFORM · CHAKRAVYUH 2026
+                <span className="font-mono text-[11px] font-bold text-[#C6FF3D] uppercase tracking-wider">
+                  DYPSEM HACKATHON · CHAKRAVYUH 2026
                 </span>
               </div>
 
-              {/* Headline */}
-              <h1
-                ref={headlineRef}
-                className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[#ECEBE4] leading-[1.15] mb-5"
-              >
-                Learn Electronics & Code by{' '}
-                <span className="text-[#C6FF3D]">Actually Building</span> Them.
+              <h1 className="font-display text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight text-[#ECEBE4] leading-[1.1] mb-6">
+                Stop Memorizing Circuits.{' '}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-[#00E5FF] to-[#C6FF3D]">
+                  Start Making Them Work.
+                </span>
               </h1>
 
-              {/* Supporting Copy */}
-              <p
-                ref={copyRef}
-                className="text-base sm:text-lg text-[#9CA3A8] leading-relaxed max-w-xl mb-8"
-              >
-                Zero-stress digital electronics & embedded workbench. Meet <strong className="text-[#ECEBE4]">Volt</strong>, your cheerful AI chip mentor that teaches according to your university syllabus!
+              <p className="text-base sm:text-lg text-[#9CA3A8] leading-relaxed max-w-xl mb-8">
+                Build real combinational logic, disarm hardware glitch traps in the CHAKRAVYUH arena, and flash virtual ATmega microcontrollers—guided by <strong className="text-[#ECEBE4]">Volt</strong>, your 3D AI companion.
               </p>
 
-              {/* Big, Friendly Action Buttons */}
-              <div
-                ref={ctaRef}
-                className="flex flex-wrap items-center gap-4 w-full sm:w-auto"
-              >
+              <div className="flex flex-wrap items-center gap-4 w-full sm:w-auto">
                 <BenchButton
                   variant="primary"
                   size="lg"
-                  onClick={() => onNavigate('chakravyuha')}
-                  icon={<Shield className="w-4 h-4" />}
+                  onClick={() => onNavigate('login')}
+                  icon={<ArrowRight className="w-4 h-4" />}
                   iconPosition="right"
                 >
-                  Enter CHAKRAVYUH Arena ⚡
+                  Enter Workbench ➔
                 </BenchButton>
 
                 <BenchButton
                   variant="secondary"
                   size="lg"
-                  onClick={() => onNavigate('lab')}
-                  icon={<Play className="w-4 h-4 fill-current" />}
+                  onClick={() => onNavigate('chakravyuha')}
+                  icon={<Shield className="w-4 h-4 text-[#C6FF3D]" />}
                 >
-                  Open Circuit Lab
+                  CHAKRAVYUH Arena
                 </BenchButton>
               </div>
 
-              {/* 3 Quick Bullet Points for Students */}
-              <div className="mt-8 pt-6 border-t border-[#282E33] w-full grid grid-cols-3 gap-3 text-xs font-mono text-[#9CA3A8]">
+              {/* 3 Trust Badges */}
+              <div className="mt-8 pt-6 border-t border-[#20262D] w-full grid grid-cols-3 gap-3 font-mono text-[11px] text-[#9CA3A8]">
                 <div className="flex items-center gap-1.5">
                   <span className="text-[#C6FF3D]">✓</span>
                   <span>100% Free & Visual</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[#3DDCFF]">✓</span>
-                  <span>Instant Truth Tables</span>
+                  <span>SPPU / AICTE Syllabi</span>
                 </div>
                 <div className="flex items-center gap-1.5">
                   <span className="text-[#ECEBE4]">✓</span>
-                  <span>AI Study Buddy</span>
+                  <span>3D AI Mentor</span>
                 </div>
               </div>
             </div>
 
-            {/* Right Column: Interactive XOR Circuit Component */}
-            <div className="lg:col-span-6 w-full">
+            {/* Right Column: Live Interactive XOR Bench + 3D Volt Bot */}
+            <div className="lg:col-span-6 w-full relative">
               <HeroInteractiveCircuit />
             </div>
+
           </div>
         </div>
       </section>
 
-      {/* 4 Simple Steps to Learn (Proof of Interaction) */}
-      <ProofOfInteraction />
+      {/* 3. The Three Workbenches: Authentic Hardware Imagery & Zero AI Clutter */}
+      <section className="py-20 border-t border-[#20262D] bg-[#0E1216] relative">
+        <div className="max-w-6xl mx-auto px-4 sm:px-8">
+          <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-12 gap-4">
+            <div>
+              <span className="font-mono text-xs text-[#C6FF3D] uppercase font-bold tracking-widest block mb-2">
+                CORE ARCHITECTURE
+              </span>
+              <h2 className="font-display text-3xl font-bold text-[#ECEBE4]">
+                Three Engineering Labs. Zero Guesswork.
+              </h2>
+            </div>
+            <p className="text-xs text-[#9CA3A8] max-w-sm font-sans leading-relaxed">
+              Every tool is grounded in deterministic electronics physics—from transistor-level logic to clock-cycle microcontroller firmware.
+            </p>
+          </div>
 
-      {/* Popular Beginner Lessons (Mission Gallery) */}
-      <MissionGallery onSelectMission={onSelectMission} />
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {/* Card 1: Virtual Circuit Lab */}
+            <div
+              onClick={() => onNavigate('lab')}
+              className="group rounded-3xl border border-[#22282F] bg-[#12161A] overflow-hidden hover:border-[#00E5FF] transition-all cursor-pointer flex flex-col justify-between shadow-xl"
+            >
+              <div className="h-48 relative overflow-hidden">
+                <img
+                  src="/images/circuit-board.jpg"
+                  alt="Circuit Board Logic"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-70 group-hover:opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
+                <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 backdrop-blur-md border border-[#22282F] text-[10px] font-mono text-[#00E5FF] font-bold">
+                  01 / VIRTUAL BENCH
+                </span>
+              </div>
 
-      {/* Friendly AI Study Buddy Showcase */}
-      <AIMentorShowcase />
+              <div className="p-6 space-y-3">
+                <h3 className="font-display text-lg font-bold text-[#ECEBE4] group-hover:text-[#00E5FF] transition-colors">
+                  Digital Logic Playground
+                </h3>
+                <p className="text-xs text-[#9CA3A8] leading-relaxed">
+                  Connect gates (AND, OR, XOR, NAND), flip virtual SPDT switches, and inspect real-time signal bus flow without burning a single IC.
+                </p>
+                <div className="pt-2 text-xs font-mono font-bold text-[#00E5FF] flex items-center gap-1">
+                  <span>Open Playground</span>
+                  <span>›</span>
+                </div>
+              </div>
+            </div>
 
-      {/* Final Simple CTA */}
-      <section className="py-20 border-t border-[#282E33] bg-[#16191C] relative text-center">
-        <div className="max-w-3xl mx-auto px-4 sm:px-6">
-          <h2 className="font-display text-3xl font-bold tracking-tight text-[#ECEBE4] mb-3">
-            Ready to master digital electronics?
-          </h2>
-          <p className="text-base text-[#9CA3A8] max-w-lg mx-auto mb-8">
-            Join thousands of BCA, B.Tech, and diploma students learning logic gates the hands-on way.
-          </p>
-          <BenchButton
-            variant="primary"
-            size="lg"
-            onClick={() => onNavigate('lab')}
-            icon={<ArrowUpRight className="w-4 h-4" />}
-            iconPosition="right"
-          >
-            Open Circuit Playground 🚀
-          </BenchButton>
+            {/* Card 2: CHAKRAVYUH Challenge */}
+            <div
+              onClick={() => onNavigate('chakravyuha')}
+              className="group rounded-3xl border-2 border-[#C6FF3D]/40 bg-[#12161A] overflow-hidden hover:border-[#C6FF3D] transition-all cursor-pointer flex flex-col justify-between shadow-xl"
+            >
+              <div className="h-48 relative overflow-hidden">
+                <img
+                  src="/images/oscilloscope.jpg"
+                  alt="Oscilloscope Glitch Hunting"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-70 group-hover:opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
+                <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 backdrop-blur-md border border-[#C6FF3D]/40 text-[10px] font-mono text-[#C6FF3D] font-bold">
+                  02 / HACKATHON ARENA
+                </span>
+              </div>
+
+              <div className="p-6 space-y-3">
+                <h3 className="font-display text-lg font-bold text-[#ECEBE4] group-hover:text-[#C6FF3D] transition-colors">
+                  CHAKRAVYUH 2026 Challenge
+                </h3>
+                <p className="text-xs text-[#9CA3A8] leading-relaxed">
+                  Breach the 3-layer timed electronic maze: disarm Padmavyuha's De Morgan trap, troubleshoot Karmavyuha's faulty 4:1 MUX, and synchronize ATmega PWM.
+                </p>
+                <div className="pt-2 text-xs font-mono font-bold text-[#C6FF3D] flex items-center gap-1">
+                  <span>Enter Arena (+500 XP)</span>
+                  <span>›</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Card 3: Arduino Embedded Code Lab */}
+            <div
+              onClick={() => onNavigate('code-lab')}
+              className="group rounded-3xl border border-[#22282F] bg-[#12161A] overflow-hidden hover:border-[#3DDCFF] transition-all cursor-pointer flex flex-col justify-between shadow-xl"
+            >
+              <div className="h-48 relative overflow-hidden">
+                <img
+                  src="/images/breadboard.jpg"
+                  alt="Arduino Prototyping"
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500 opacity-70 group-hover:opacity-90"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-[#12161A] via-transparent to-transparent" />
+                <span className="absolute top-3 left-3 px-2.5 py-0.5 rounded-full bg-[#0A0D10]/80 backdrop-blur-md border border-[#22282F] text-[10px] font-mono text-[#3DDCFF] font-bold">
+                  03 / FIRMWARE LAB
+                </span>
+              </div>
+
+              <div className="p-6 space-y-3">
+                <h3 className="font-display text-lg font-bold text-[#ECEBE4] group-hover:text-[#3DDCFF] transition-colors">
+                  Arduino & AVR Microcontrollers
+                </h3>
+                <p className="text-xs text-[#9CA3A8] leading-relaxed">
+                  Write embedded C code in the browser. Compile and run sketches on a virtual ATmega328P target with live Pin 13 LED output.
+                </p>
+                <div className="pt-2 text-xs font-mono font-bold text-[#3DDCFF] flex items-center gap-1">
+                  <span>Launch Code Lab</span>
+                  <span>›</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
         </div>
       </section>
 
-      {/* Minimal Footer */}
-      <LandingFooter onNavigate={onNavigate} />
+      {/* 4. University Curriculum Alignment & Final Call to Action */}
+      <section className="py-20 border-t border-[#20262D] bg-[#0A0D10] text-center">
+        <div className="max-w-4xl mx-auto px-4 sm:px-8 space-y-6">
+          <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#12161A] border border-[#22282F] text-[10px] font-mono text-[#9CA3A8]">
+            <span>AICTE & SPPU PUNE UNIVERSITY COMPLIANT</span>
+          </div>
+
+          <h2 className="font-display text-3xl sm:text-4xl font-bold text-[#ECEBE4]">
+            Ready to master electronics the visual way?
+          </h2>
+
+          <p className="text-sm text-[#9CA3A8] max-w-lg mx-auto leading-relaxed">
+            Choose your year, meet Volt, and start designing circuits that work in minutes.
+          </p>
+
+          <div className="pt-2">
+            <BenchButton
+              variant="primary"
+              size="lg"
+              onClick={() => onNavigate('login')}
+              icon={<ArrowRight className="w-4 h-4" />}
+              iconPosition="right"
+            >
+              Start Free Student Workbench 🚀
+            </BenchButton>
+          </div>
+        </div>
+      </section>
+
+      {/* 5. Minimal Engineering Footer */}
+      <footer className="py-8 px-6 border-t border-[#20262D] bg-[#080A0D] text-xs font-mono text-[#646F77] select-none">
+        <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2">
+            <span className="w-2 h-2 rounded-full bg-[#C6FF3D]" />
+            <span>DYPSEM Hackathon 2026 · Smart E&TC Learning Platform</span>
+          </div>
+          <div className="flex items-center gap-6">
+            <button onClick={() => onNavigate('login')} className="hover:text-[#ECEBE4]">
+              Student Login
+            </button>
+            <button onClick={() => onNavigate('chakravyuha')} className="hover:text-[#ECEBE4]">
+              CHAKRAVYUH
+            </button>
+            <button onClick={() => onNavigate('lab')} className="hover:text-[#ECEBE4]">
+              Virtual Lab
+            </button>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 };

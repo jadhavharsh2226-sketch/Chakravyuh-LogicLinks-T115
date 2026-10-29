@@ -41,32 +41,20 @@ export const AppShell: React.FC<AppShellProps> = ({
 
   const navGroups = [
     {
-      group: 'STUDENT DASHBOARD',
+      group: 'WORKBENCHES',
       items: [
         { id: 'dashboard', label: 'My Dashboard', icon: <LayoutDashboard className="w-4 h-4" /> },
-      ],
-    },
-    {
-      group: 'CHALLENGES & CODE',
-      items: [
+        { id: 'lab', label: 'Circuit Playground', icon: <Cpu className="w-4 h-4 text-[#00E5FF]" /> },
         { id: 'chakravyuha', label: 'CHAKRAVYUH Arena', icon: <Shield className="w-4 h-4 text-[#C6FF3D]" /> },
         { id: 'code-lab', label: 'Arduino Code Lab', icon: <Code2 className="w-4 h-4 text-[#3DDCFF]" /> },
       ],
     },
     {
-      group: 'PRACTICE & PLAY',
+      group: 'PRACTICE & TOOLS',
       items: [
-        { id: 'lab', label: 'Circuit Playground', icon: <Cpu className="w-4 h-4 text-[#3DDCFF]" /> },
         { id: 'fault-arena', label: 'Circuit Puzzles', icon: <Wrench className="w-4 h-4 text-[#FFB020]" /> },
-        { id: 'missions', label: 'Gate Lessons', icon: <Layers className="w-4 h-4 text-[#C6FF3D]" /> },
-      ],
-    },
-    {
-      group: 'REFERENCE & STATS',
-      items: [
         { id: 'knowledge', label: 'Gate Cheat Sheet', icon: <BookOpen className="w-4 h-4" /> },
-        { id: 'progress', label: 'My Progress & Badges', icon: <Trophy className="w-4 h-4 text-[#C6FF3D]" /> },
-        { id: 'saved-circuits', label: 'Saved Circuits', icon: <FolderGit2 className="w-4 h-4" /> },
+        { id: 'progress', label: 'Badges & Stats', icon: <Trophy className="w-4 h-4 text-[#C6FF3D]" /> },
       ],
     },
   ];

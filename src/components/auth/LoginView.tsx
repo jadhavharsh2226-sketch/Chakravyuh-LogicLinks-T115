@@ -2,15 +2,11 @@ import React, { useState } from 'react';
 import {
   Cpu,
   GraduationCap,
-  Sparkles,
   ArrowRight,
   Shield,
-  BookOpen,
   Wrench,
   Check,
-  Flame,
   Zap,
-  Code2,
 } from 'lucide-react';
 import { VoltCharacter, VoltExpression } from '../common/VoltCharacter';
 import { BenchButton } from '../common/BenchButton';
@@ -33,115 +29,69 @@ export const LoginView: React.FC<LoginViewProps> = ({
   const [collegeName, setCollegeName] = useState('DYPSEM Pune');
   const [selectedTrack, setSelectedTrack] = useState<AcademicTrack>('ENTC_SEMESTER_1_2');
   const [selectedGoal, setSelectedGoal] = useState<StudentGoal>('CHAKRAVYUH_CHALLENGE');
-  const [dailyMinutes, setDailyMinutes] = useState<number>(10);
 
   // Mascot dynamic state
   const [voltExpression, setVoltExpression] = useState<VoltExpression>('happy');
   const [voltSpeech, setVoltSpeech] = useState<string>(
-    "Hi there! ⚡ I'm Volt, your personal AI mentor. Let's customize your electronics syllabus!"
+    "Hi there! ⚡ I'm Volt. Pick your syllabus and let's jump into the workbench!"
   );
 
   const TRACKS: Array<{
     id: AcademicTrack;
     title: string;
     subtitle: string;
-    badge: string;
-    icon: string;
   }> = [
     {
       id: 'ENTC_SEMESTER_1_2',
       title: 'E&TC — First Year (FE)',
-      subtitle: 'Basic Electrical & Electronics (BEE) · Logic Gates · Adders',
-      badge: 'SPPU / AICTE Core',
-      icon: '⚡',
+      subtitle: 'Basic Electrical & Electronics (BEE) · Gates · Adders',
     },
     {
       id: 'ENTC_SEMESTER_3_4',
       title: 'E&TC — Second Year (SE)',
-      subtitle: 'Digital Electronics & Logic Design (DELD) · K-Maps · MUX',
-      badge: 'DELD Syllabus',
-      icon: '🛠️',
+      subtitle: 'Digital Electronics & Logic Design (DELD) · MUX · K-Maps',
     },
     {
       id: 'ENTC_SEMESTER_5_6',
       title: 'E&TC — Third Year (TE)',
-      subtitle: 'Microcontrollers · ATmega328P · Embedded Systems',
-      badge: 'Hardware & IoT',
-      icon: '🤖',
+      subtitle: 'Microcontrollers · ATmega328P · Embedded C Firmware',
     },
     {
       id: 'BCA_YEAR_1',
       title: 'BCA — 1st Year',
-      subtitle: 'Digital Computer Fundamentals · De Morgan · Truth Tables',
-      badge: 'University BCA',
-      icon: '💻',
+      subtitle: 'Computer Fundamentals · Boolean Algebra · Truth Tables',
     },
     {
       id: 'BCA_YEAR_2',
       title: 'BCA — 2nd Year',
-      subtitle: 'Computer Architecture · Registers · Microprocessors',
-      badge: 'BCA Semester 3-4',
-      icon: '🧠',
+      subtitle: 'Computer Architecture · 8085 Microprocessor · Registers',
     },
     {
       id: 'BTECH_CS',
       title: 'B.Tech — CSE / IT',
       subtitle: 'Digital Systems & Binary Arithmetic · Hardware Logic',
-      badge: 'CS Engineering',
-      icon: '🚀',
     },
   ];
 
-  const GOALS: Array<{
-    id: StudentGoal;
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-  }> = [
-    {
-      id: 'CHAKRAVYUH_CHALLENGE',
-      title: 'Win CHAKRAVYUH 2026 Hackathon',
-      description: 'Timed multi-stage circuit puzzles & hardware glitch hunting.',
-      icon: <Shield className="w-4 h-4 text-[#C6FF3D]" />,
-    },
-    {
-      id: 'EXAM_PREP',
-      title: 'Crack Semester Exams & Viva',
-      description: 'High-yield exam questions, truth tables & cheat sheets.',
-      icon: <GraduationCap className="w-4 h-4 text-[#3DDCFF]" />,
-    },
-    {
-      id: 'PRACTICAL_LABS',
-      title: 'Master Lab Practicals',
-      description: 'Zero-burn virtual workbench for breadboards and wiring.',
-      icon: <Wrench className="w-4 h-4 text-[#FFB020]" />,
-    },
-    {
-      id: 'ARDUINO_EMBEDDED',
-      title: 'Learn Embedded C & Arduino',
-      description: 'Firmware programming with virtual Pin 13 LED & ATmega.',
-      icon: <Code2 className="w-4 h-4 text-[#3DDCFF]" />,
-    },
-  ];
-
-  const handleTrackChange = (track: AcademicTrack) => {
+  const handleTrackChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    const track = e.target.value as AcademicTrack;
     sounds.playClick();
     setSelectedTrack(track);
     setVoltExpression('excited');
     const syllabus = UNIVERSITY_SYLLABI[track];
-    setVoltSpeech(`Awesome! Loaded official ${syllabus?.yearName || 'Syllabus'}! Ready to make digital logic easy! 🎯`);
+    setVoltSpeech(`Great choice! Loaded official ${syllabus?.yearName || 'Syllabus'}! 🎯`);
   };
 
-  const handleGoalChange = (goal: StudentGoal) => {
+  const handleGoalSelect = (goal: StudentGoal) => {
     sounds.playClick();
     setSelectedGoal(goal);
     setVoltExpression('celebrating');
     if (goal === 'CHAKRAVYUH_CHALLENGE') {
-      setVoltSpeech("CHAKRAVYUH! 🛡️ The 3-layer maze awaits! I'll guide you through Padmavyuha & Karmavyuha!");
+      setVoltSpeech("CHAKRAVYUH 2026 Arena selected! The 3-layer maze awaits! 🛡️");
     } else if (goal === 'EXAM_PREP') {
-      setVoltSpeech("Exam prep mode on! 📚 I'll give you quick tips and viva-tested explanations!");
+      setVoltSpeech("Exam Viva Prep mode! High-yield questions and quick tricks ready! 📚");
     } else {
-      setVoltSpeech("Hands-on mode! Let's wire components without burning any ICs! 🔥");
+      setVoltSpeech("Virtual Lab mode! Wire components without burning any ICs! 🔬");
     }
   };
 
@@ -154,28 +104,31 @@ export const LoginView: React.FC<LoginViewProps> = ({
       name: studentName.trim() || 'Student Engineer',
       track: selectedTrack,
       goal: selectedGoal,
-      dailyGoalMinutes: dailyMinutes,
-      xp: 150, // Welcome bonus XP!
+      xp: 150,
     };
 
     onLogin(newProfile);
   };
 
   return (
-    <div className="min-h-screen bg-[#0E1012] text-[#ECEBE4] flex flex-col justify-between selection:bg-[#C6FF3D] selection:text-[#0E1012] font-sans antialiased">
+    <div className="min-h-screen bg-[#0A0D10] text-[#ECEBE4] flex flex-col justify-between selection:bg-[#C6FF3D] selection:text-[#0A0D10] font-sans antialiased relative overflow-hidden">
+      {/* Ambient background glow */}
+      <div className="absolute top-1/4 left-1/4 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-[#00E5FF]/8 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#C6FF3D]/6 rounded-full blur-3xl pointer-events-none" />
+
       {/* Top Navbar */}
-      <header className="py-4 px-6 border-b border-[#282E33] bg-[#16191C]/80 backdrop-blur-md flex items-center justify-between select-none">
+      <header className="h-14 px-6 border-b border-[#20262D] bg-[#111519]/80 backdrop-blur-md flex items-center justify-between z-20 select-none">
         <div className="flex items-center gap-3">
-          <div className="w-9 h-9 rounded-xl bg-[#0E1012] border border-[#282E33] flex items-center justify-center text-[#C6FF3D]">
-            <Cpu className="w-5 h-5" />
+          <div className="w-8 h-8 rounded-xl bg-[#0A0D10] border border-[#22282F] flex items-center justify-center text-[#C6FF3D]">
+            <Cpu className="w-4 h-4" />
           </div>
           <div>
-            <div className="font-display font-bold text-sm tracking-tight text-[#ECEBE4]">
+            <span className="font-display font-bold text-sm text-[#ECEBE4]">
               CircuitVerse <span className="text-[#C6FF3D]">AI</span>
-            </div>
-            <div className="text-[10px] text-[#9CA3A8] font-mono">
-              Smart ENTC Learning Platform · CHAKRAVYUH 2026
-            </div>
+            </span>
+            <span className="hidden sm:inline text-[11px] text-[#646F77] font-mono ml-2 pl-2 border-l border-[#22282F]">
+              Smart E&TC Learning Platform
+            </span>
           </div>
         </div>
 
@@ -187,201 +140,193 @@ export const LoginView: React.FC<LoginViewProps> = ({
         </button>
       </header>
 
-      {/* Main Login Experience */}
-      <main className="flex-1 max-w-4xl w-full mx-auto p-4 sm:p-8 flex flex-col justify-center">
-        {/* Volt Mascot Header */}
-        <div className="flex flex-col items-center text-center mb-8">
-          <VoltCharacter
-            expression={voltExpression}
-            size="lg"
-            speechText={voltSpeech}
-            onClick={() => sounds.playChirp()}
-          />
-          <h1 className="font-display text-2xl sm:text-3xl font-bold text-[#ECEBE4] mt-3">
-            Welcome to Your Digital Workbench
-          </h1>
-          <p className="text-xs sm:text-sm text-[#9CA3A8] max-w-md mt-1">
-            Tell us about your university track so Volt can teach you according to your exact syllabus!
-          </p>
-        </div>
-
-        {/* Card Form */}
-        <form
-          onSubmit={handleFormSubmit}
-          className="bg-[#16191C] border border-[#282E33] rounded-3xl p-6 sm:p-8 space-y-6 shadow-2xl"
-        >
-          {/* Section 1: Student Identity */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-xs font-mono font-bold text-[#9CA3A8] uppercase mb-1.5">
-                Your Name / Nickname
-              </label>
-              <input
-                type="text"
-                required
-                value={studentName}
-                onChange={(e) => {
-                  setStudentName(e.target.value);
-                  setVoltExpression('curious_coding');
-                }}
-                placeholder="e.g. Harsh Jadhav"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#0E1012] border border-[#282E33] focus:border-[#C6FF3D] text-[#ECEBE4] text-xs font-sans outline-none transition-all"
+      {/* Center Form Container (Strictly fits without vertical overflow) */}
+      <main className="flex-1 max-w-5xl w-full mx-auto p-4 sm:p-6 flex items-center justify-center z-10">
+        <div className="w-full grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
+          
+          {/* Left Column: 3D Mascot Showcase */}
+          <div className="lg:col-span-5 flex flex-col items-center text-center space-y-4">
+            <div className="relative">
+              <VoltCharacter
+                expression={voltExpression}
+                size="xl"
+                speechText={voltSpeech}
+                onClick={() => sounds.playChirp()}
               />
             </div>
 
             <div>
-              <label className="block text-xs font-mono font-bold text-[#9CA3A8] uppercase mb-1.5">
-                College / University
-              </label>
-              <input
-                type="text"
-                value={collegeName}
-                onChange={(e) => setCollegeName(e.target.value)}
-                placeholder="e.g. DYPSEM / SPPU"
-                className="w-full px-4 py-2.5 rounded-xl bg-[#0E1012] border border-[#282E33] focus:border-[#C6FF3D] text-[#ECEBE4] text-xs font-sans outline-none transition-all"
-              />
+              <h2 className="font-display text-xl font-bold text-[#ECEBE4]">
+                Meet Volt, Your 3D Study Buddy
+              </h2>
+              <p className="text-xs text-[#9CA3A8] max-w-xs mx-auto mt-1 leading-relaxed">
+                Personalized digital electronics guidance tailored to your university curriculum.
+              </p>
+            </div>
+
+            {/* Badges */}
+            <div className="flex flex-wrap items-center justify-center gap-2 pt-1 font-mono text-[10px]">
+              <span className="px-2.5 py-1 rounded-full bg-[#161C22] border border-[#22282F] text-[#C6FF3D]">
+                ✓ SPPU / AICTE Curriculum
+              </span>
+              <span className="px-2.5 py-1 rounded-full bg-[#161C22] border border-[#22282F] text-[#3DDCFF]">
+                ✓ CHAKRAVYUH 2026 Ready
+              </span>
             </div>
           </div>
 
-          {/* Section 2: Choose Academic Track */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <label className="text-xs font-mono font-bold text-[#9CA3A8] uppercase">
-                Select Your Degree & Academic Year
-              </label>
-              <span className="text-[10px] font-mono text-[#C6FF3D] font-bold">
-                Tailors Circuit Lessons & Viva Q&A
-              </span>
-            </div>
+          {/* Right Column: Sleek, Focused Sign-in Card */}
+          <div className="lg:col-span-7">
+            <form
+              onSubmit={handleFormSubmit}
+              className="bg-[#12161A]/95 border border-[#22282F] rounded-3xl p-6 sm:p-8 backdrop-blur-xl shadow-2xl space-y-5"
+            >
+              <div>
+                <div className="font-mono text-[10px] text-[#C6FF3D] font-bold tracking-wider uppercase mb-1">
+                  STUDENT ONBOARDING
+                </div>
+                <h1 className="font-display text-2xl font-bold text-[#ECEBE4]">
+                  Enter Your Engineering Workbench
+                </h1>
+                <p className="text-xs text-[#9CA3A8] mt-0.5">
+                  Set your degree and focus so Volt can customize your logic lessons.
+                </p>
+              </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {TRACKS.map((t) => {
-                const isSelected = selectedTrack === t.id;
-                return (
-                  <div
-                    key={t.id}
-                    onClick={() => handleTrackChange(t.id)}
-                    className={`p-3.5 rounded-2xl border cursor-pointer transition-all flex items-start gap-3 select-none ${
-                      isSelected
-                        ? 'bg-[#C6FF3D]/10 border-[#C6FF3D] text-[#ECEBE4] shadow-[0_0_15px_rgba(198,255,61,0.15)]'
-                        : 'bg-[#0E1012] border-[#282E33] text-[#9CA3A8] hover:border-[#525C64]'
-                    }`}
+              {/* Student Name & College */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-[11px] font-mono text-[#9CA3A8] uppercase mb-1">
+                    Your Name
+                  </label>
+                  <input
+                    type="text"
+                    required
+                    value={studentName}
+                    onChange={(e) => {
+                      setStudentName(e.target.value);
+                      setVoltExpression('curious_coding');
+                    }}
+                    placeholder="e.g. Harsh Jadhav"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0A0D10] border border-[#22282F] focus:border-[#C6FF3D] text-[#ECEBE4] text-xs outline-none transition-colors"
+                  />
+                </div>
+
+                <div>
+                  <label className="block text-[11px] font-mono text-[#9CA3A8] uppercase mb-1">
+                    College / University
+                  </label>
+                  <input
+                    type="text"
+                    value={collegeName}
+                    onChange={(e) => setCollegeName(e.target.value)}
+                    placeholder="e.g. DYPSEM Pune"
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0A0D10] border border-[#22282F] focus:border-[#C6FF3D] text-[#ECEBE4] text-xs outline-none transition-colors"
+                  />
+                </div>
+              </div>
+
+              {/* Degree / Academic Year Select */}
+              <div>
+                <label className="block text-[11px] font-mono text-[#9CA3A8] uppercase mb-1">
+                  University Degree & Academic Year
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedTrack}
+                    onChange={handleTrackChange}
+                    className="w-full px-3.5 py-2.5 rounded-xl bg-[#0A0D10] border border-[#22282F] focus:border-[#C6FF3D] text-[#ECEBE4] text-xs outline-none transition-colors appearance-none cursor-pointer"
                   >
-                    <span className="text-xl shrink-0 mt-0.5">{t.icon}</span>
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center justify-between">
-                        <span className="font-bold text-xs text-[#ECEBE4] truncate">
-                          {t.title}
-                        </span>
-                        {isSelected && <Check className="w-4 h-4 text-[#C6FF3D] shrink-0" />}
+                    {TRACKS.map((t) => (
+                      <option key={t.id} value={t.id} className="bg-[#12161A] text-[#ECEBE4]">
+                        {t.title} — {t.subtitle}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute right-3.5 top-1/2 -translate-y-1/2 pointer-events-none text-[#646F77] text-xs">
+                    ▼
+                  </div>
+                </div>
+              </div>
+
+              {/* Learning Goal Pills */}
+              <div>
+                <label className="block text-[11px] font-mono text-[#9CA3A8] uppercase mb-1.5">
+                  What's Your Main Focus?
+                </label>
+                <div className="grid grid-cols-3 gap-2">
+                  {[
+                    {
+                      id: 'CHAKRAVYUH_CHALLENGE' as StudentGoal,
+                      label: 'CHAKRAVYUH',
+                      sub: 'Hackathon Arena',
+                      icon: <Shield className="w-3.5 h-3.5 text-[#C6FF3D]" />,
+                    },
+                    {
+                      id: 'EXAM_PREP' as StudentGoal,
+                      label: 'Exams & Viva',
+                      sub: 'High-Yield Q&A',
+                      icon: <GraduationCap className="w-3.5 h-3.5 text-[#3DDCFF]" />,
+                    },
+                    {
+                      id: 'PRACTICAL_LABS' as StudentGoal,
+                      label: 'Virtual Labs',
+                      sub: 'Zero-Burn Circuit',
+                      icon: <Wrench className="w-3.5 h-3.5 text-[#FFB020]" />,
+                    },
+                  ].map((g) => {
+                    const isSelected = selectedGoal === g.id;
+                    return (
+                      <div
+                        key={g.id}
+                        onClick={() => handleGoalSelect(g.id)}
+                        className={`p-2.5 rounded-xl border cursor-pointer transition-all text-center select-none ${
+                          isSelected
+                            ? 'bg-[#182026] border-[#C6FF3D] text-[#ECEBE4] shadow-[0_0_10px_rgba(198,255,61,0.12)]'
+                            : 'bg-[#0A0D10] border-[#22282F] text-[#9CA3A8] hover:border-[#38424D]'
+                        }`}
+                      >
+                        <div className="flex justify-center mb-1">{g.icon}</div>
+                        <div className="font-bold text-xs">{g.label}</div>
+                        <div className="text-[10px] text-[#646F77] truncate">{g.sub}</div>
                       </div>
-                      <p className="text-[11px] text-[#9CA3A8] mt-0.5 line-clamp-1">
-                        {t.subtitle}
-                      </p>
-                      <span className="inline-block mt-1 text-[9px] font-mono px-2 py-0.5 rounded-full bg-[#1D2125] text-[#3DDCFF]">
-                        {t.badge}
-                      </span>
-                    </div>
-                  </div>
-                );
-              })}
-            </div>
-          </div>
+                    );
+                  })}
+                </div>
+              </div>
 
-          {/* Section 3: Primary Goal */}
-          <div>
-            <label className="block text-xs font-mono font-bold text-[#9CA3A8] uppercase mb-2">
-              What's Your Main Focus Right Now?
-            </label>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-              {GOALS.map((g) => {
-                const isSelected = selectedGoal === g.id;
-                return (
-                  <div
-                    key={g.id}
-                    onClick={() => handleGoalChange(g.id)}
-                    className={`p-3 rounded-2xl border cursor-pointer transition-all flex items-center gap-3 select-none ${
-                      isSelected
-                        ? 'bg-[#1D2125] border-[#3DDCFF] text-[#ECEBE4]'
-                        : 'bg-[#0E1012] border-[#282E33] text-[#9CA3A8] hover:border-[#525C64]'
-                    }`}
-                  >
-                    <div className="p-2 rounded-xl bg-[#16191C] border border-[#282E33]">
-                      {g.icon}
-                    </div>
-                    <div className="flex-1">
-                      <div className="font-bold text-xs text-[#ECEBE4]">{g.title}</div>
-                      <div className="text-[10px] text-[#9CA3A8]">{g.description}</div>
-                    </div>
-                    {isSelected && <Check className="w-4 h-4 text-[#3DDCFF]" />}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-
-          {/* Section 4: Daily Goal Commitment */}
-          <div className="pt-2 border-t border-[#282E33] flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <span className="text-xs font-mono text-[#ECEBE4] font-bold block">
-                Daily Learning Goal
-              </span>
-              <span className="text-[11px] text-[#9CA3A8]">
-                Bite-sized microlearning to prevent academic burnout
-              </span>
-            </div>
-            <div className="flex items-center gap-2">
-              {[
-                { mins: 5, label: '5 min (Casual)' },
-                { mins: 10, label: '10 min (Regular)' },
-                { mins: 20, label: '20 min (Intense)' },
-              ].map((m) => (
+              {/* Action Buttons */}
+              <div className="pt-2 flex flex-col sm:flex-row items-center justify-between gap-3">
                 <button
-                  key={m.mins}
                   type="button"
-                  onClick={() => {
-                    sounds.playClick();
-                    setDailyMinutes(m.mins);
-                  }}
-                  className={`px-3 py-1.5 rounded-xl font-mono text-xs font-bold border transition-all ${
-                    dailyMinutes === m.mins
-                      ? 'bg-[#C6FF3D]/15 border-[#C6FF3D] text-[#C6FF3D]'
-                      : 'bg-[#0E1012] border-[#282E33] text-[#9CA3A8]'
-                  }`}
+                  onClick={onExploreGuest}
+                  className="text-xs font-mono text-[#9CA3A8] hover:text-[#ECEBE4] flex items-center gap-1.5"
                 >
-                  {m.label}
+                  <Zap className="w-3.5 h-3.5 text-[#3DDCFF]" />
+                  <span>1-Click Guest Bypass</span>
                 </button>
-              ))}
-            </div>
+
+                <BenchButton
+                  variant="primary"
+                  size="lg"
+                  type="submit"
+                  icon={<ArrowRight className="w-4 h-4" />}
+                  iconPosition="right"
+                  className="w-full sm:w-auto"
+                >
+                  Enter Workbench ➔
+                </BenchButton>
+              </div>
+            </form>
           </div>
 
-          {/* Submit Action Buttons */}
-          <div className="pt-4 flex flex-col sm:flex-row items-center justify-between gap-3">
-            <button
-              type="button"
-              onClick={onExploreGuest}
-              className="text-xs font-mono text-[#9CA3A8] hover:text-[#ECEBE4] flex items-center gap-1.5"
-            >
-              <span>⚡ Skip to 1-Click Guest Login</span>
-            </button>
-
-            <BenchButton
-              variant="primary"
-              size="lg"
-              type="submit"
-              icon={<ArrowRight className="w-4 h-4" />}
-              iconPosition="right"
-              className="w-full sm:w-auto"
-            >
-              Start Workbench with Volt (+150 XP) 🚀
-            </BenchButton>
-          </div>
-        </form>
+        </div>
       </main>
 
-      {/* Footer */}
-      <footer className="py-4 text-center text-xs font-mono text-[#646F77] border-t border-[#282E33]">
-        Smart E&TC Learning Platform · Built with Volt AI Mascot for DYPSEM 2026
+      {/* Clean Bottom Footer */}
+      <footer className="h-10 px-6 border-t border-[#20262D] flex items-center justify-between text-[11px] font-mono text-[#646F77] z-20">
+        <span>DYPSEM Hackathon 2026</span>
+        <span>Smart E&TC Platform · Powered by Volt AI</span>
       </footer>
     </div>
   );
