@@ -264,7 +264,7 @@ Give a warm, friendly, bite-sized 2-3 sentence answer with emojis (⚡, 💡, �
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'http://localhost:5173',
-          'X-Title': 'Chakravyuh-LogicLinks-T115',
+          'X-Title': 'Logic Links',
         },
         body: JSON.stringify({
           model: 'openrouter/free',

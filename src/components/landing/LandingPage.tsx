@@ -39,10 +39,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-display text-sm font-bold tracking-tight text-[#ECEBE4]">
-                Chakravyuh <span className="text-[#C6FF3D]">LogicLinks</span>
+                Logic <span className="text-[#C6FF3D]">Links</span>
               </span>
               <span className="text-[10px] text-[#646F77] font-mono leading-none">
-                Team T115 · Smart E&TC Platform
+                Smart E&TC Platform
               </span>
             </div>
           </div>
@@ -318,14 +318,14 @@ export const LandingPage: React.FC<LandingPageProps> = ({
         <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div className="flex items-center gap-2">
             <span className="w-2 h-2 rounded-full bg-[#C6FF3D]" />
-            <span>CircuitVerse AI · Precision Digital Engineering Platform</span>
+            <span>Logic Links · Precision Digital Engineering Platform</span>
           </div>
           <div className="flex items-center gap-6">
             <button onClick={() => onNavigate('login')} className="hover:text-[#ECEBE4]">
               Student Login
             </button>
             <button onClick={() => onNavigate('chakravyuha')} className="hover:text-[#ECEBE4]">
-              CHAKRAVYUH
+              Circuit Arena
             </button>
             <button onClick={() => onNavigate('lab')} className="hover:text-[#ECEBE4]">
               Virtual Lab

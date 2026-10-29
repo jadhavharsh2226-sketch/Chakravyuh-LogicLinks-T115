@@ -102,7 +102,7 @@ export function App() {
         studentXP={studentProfile.xp}
         pageTitle={
           currentView === 'chakravyuha'
-            ? 'CHAKRAVYUH Challenge Arena'
+            ? 'Circuit Arena'
             : currentView === 'code-lab'
             ? 'Arduino Embedded Code Lab'
             : currentView === 'lab'

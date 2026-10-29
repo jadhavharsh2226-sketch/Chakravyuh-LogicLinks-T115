@@ -83,10 +83,10 @@ export const AppShell: React.FC<AppShellProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-display text-sm font-bold tracking-tight text-[#ECEBE4]">
-                Chakravyuh <span className="text-[#C6FF3D]">LogicLinks</span>
+                Logic <span className="text-[#C6FF3D]">Links</span>
               </span>
               <span className="text-[10px] text-[#646F77] font-mono leading-none">
-                Team T115
+                Smart E&TC Platform
               </span>
             </div>
           </div>

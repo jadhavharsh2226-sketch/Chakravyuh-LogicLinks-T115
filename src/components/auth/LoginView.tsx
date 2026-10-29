@@ -124,10 +124,10 @@ export const LoginView: React.FC<LoginViewProps> = ({
           </div>
           <div>
             <span className="font-display font-bold text-sm text-[#ECEBE4]">
-              Chakravyuh <span className="text-[#C6FF3D]">LogicLinks</span>
+              Logic <span className="text-[#C6FF3D]">Links</span>
             </span>
             <span className="hidden sm:inline text-[11px] text-[#646F77] font-mono ml-2 pl-2 border-l border-[#22282F]">
-              Team T115 · Smart E&TC Learning Platform
+              Smart E&TC Learning Platform
             </span>
           </div>
         </div>
@@ -325,7 +325,7 @@ export const LoginView: React.FC<LoginViewProps> = ({
 
       {/* Clean Bottom Footer */}
       <footer className="h-10 px-6 border-t border-[#20262D] flex items-center justify-between text-[11px] font-mono text-[#646F77] z-20">
-        <span>CircuitVerse AI</span>
+        <span>Logic Links</span>
         <span>Smart E&TC Platform · Powered by Volt Agentic AI</span>
       </footer>
     </div>
