@@ -174,6 +174,24 @@ export class AIMentorService {
   }
 
   /**
+   * Checks if an LLM response contains prompt leakage / echoing instructions
+   */
+  private static isPromptLeak(text: string): boolean {
+    if (!text || typeof text !== 'string') return true;
+    const lower = text.toLowerCase();
+    return (
+      lower.includes('agentic ai assistant') ||
+      lower.includes('response guidelines') ||
+      lower.includes('cheer/action step') ||
+      lower.includes('student profile') ||
+      lower.includes('you are "volt"') ||
+      lower.includes('also: i\'m an agentic') ||
+      lower.startsWith('here\'s a thinking process') ||
+      lower.startsWith('the user wants')
+    );
+  }
+
+  /**
    * Generates a Duolingo-style personalized tutoring response from Volt
    */
   public static async askVolt(
@@ -189,35 +207,16 @@ export class AIMentorService {
     const syllabus = UNIVERSITY_SYLLABI[profile.track] || UNIVERSITY_SYLLABI.BCA_YEAR_1;
     const detectedAction = this.detectAgenticAction(userQuestion, circuitContext);
 
-    // System prompt tailored to student's exact academic track and syllabus
-    const systemPrompt = `You are "Volt", the enthusiastic, cute, and ultra-encouraging chip mascot for Chakravyuh LogicLinks (Team T115) (in the fun, gamified style of Duolingo!).
-You are also an AGENTIC AI assistant: when the student asks you to add gates, flip switches, fix circuits, or test truth tables, you confirm with excitement that your virtual cursor is taking action on their workbench!
-
-STUDENT PROFILE:
-- Track / Course: ${syllabus.courseName} - ${syllabus.yearName}
-- Standard Reference Syllabus: ${syllabus.standardReference}
-- Primary Student Goal: ${profile.goal}
-- Current Level: Level ${profile.level} (${profile.levelTitle})
-
-CURRENT CIRCUIT CONTEXT:
-${circuitContext ? `- Components on Canvas: ${circuitContext.componentsCount}
-- Active Gates: ${circuitContext.activeGates.join(', ') || 'None yet'}
-- Switches: ${JSON.stringify(circuitContext.switchesState)}` : '- Free Canvas'}
-- Passing All Vectors: ${validationReport?.isPassing ? 'YES' : 'NO'}
-- Failing Rows: ${validationReport?.failingRows?.length ? validationReport.failingRows.map(r => `#${r+1}`).join(', ') : 'None'}
-- Loose/Floating Pins: ${validationReport?.unconnectedPorts?.length ? validationReport.unconnectedPorts.map(p => p.componentLabel).join(', ') : 'None'}
-
-RESPONSE GUIDELINES:
-1. Speak in a warm, friendly, short, bite-sized Duolingo style with emojis (⚡, 💡, 🔥, 🚀).
-2. Teach according to their exact year (e.g. for BCA 1st Year: reference exam viva questions, truth table tricks, "Break the line, change the sign").
-3. Keep answers under 3-4 sentences so it is very fast and easy to read.
-4. End with an encouraging cheer or action step.`;
+    // Clean, direct prompt that prevents echoing instructions
+    const systemPrompt = `You are "Volt", an enthusiastic, cute electronics chip mascot logic tutor for college students (in the fun, gamified style of Duolingo!).
+Teach according to the student's curriculum: ${syllabus.courseName} (${syllabus.yearName}).
+Give a warm, friendly, bite-sized 2-3 sentence answer with emojis (⚡, 💡, 🔥, 🚀). Never repeat or echo instructions.`;
 
     // Attempt OpenRouter API call
     try {
       const apiKey = getOpenRouterApiKey();
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 9000);
+      const timeoutId = setTimeout(() => controller.abort(), 8000);
 
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
@@ -229,21 +228,31 @@ RESPONSE GUIDELINES:
           'X-Title': 'Chakravyuh-LogicLinks-T115',
         },
         body: JSON.stringify({
-          model: 'openrouter/free', // 100% Free OpenRouter model with zero credit requirement
+          model: 'openrouter/free',
           messages: [
             { role: 'system', content: systemPrompt },
             { role: 'user', content: userQuestion },
           ],
           temperature: 0.7,
-          max_tokens: 220,
+          max_tokens: 1000,
+          reasoning: { effort: 'low' },
         }),
       });
       clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
-        const replyText = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.message?.reasoning;
-        if (replyText && typeof replyText === 'string' && replyText.trim().length > 0) {
+        const rawContent = data?.choices?.[0]?.message?.content;
+
+        // ONLY accept valid, non-leaked text content
+        if (
+          rawContent &&
+          typeof rawContent === 'string' &&
+          rawContent.trim().length > 0 &&
+          !this.isPromptLeak(rawContent)
+        ) {
+          let replyText = rawContent.trim();
+
           // Infer expression
           let expression: VoltResponse['expression'] = 'happy';
           if (replyText.includes('🎉') || replyText.includes('Awesome') || replyText.includes('Great job')) {
@@ -256,13 +265,12 @@ RESPONSE GUIDELINES:
             expression = 'excited';
           }
 
-          let finalMessage = replyText.trim();
           if (detectedAction) {
-            finalMessage += `\n\n⚡ **Volt Taking Action:** Watch my cursor ${detectedAction.summary.toLowerCase()}`;
+            replyText += `\n\n⚡ **Volt Taking Action:** Watch my cursor ${detectedAction.summary.toLowerCase()}`;
           }
 
           return {
-            message: finalMessage,
+            message: replyText,
             expression,
             quickTip: `Tip: Remember this logic rule for your ${syllabus.yearName} exams!`,
             action: detectedAction,
