@@ -124,10 +124,10 @@ export const LoginView: React.FC<LoginViewProps> = ({
           </div>
           <div>
             <span className="font-display font-bold text-sm text-[#ECEBE4]">
-              CircuitVerse <span className="text-[#C6FF3D]">AI</span>
+              Chakravyuh <span className="text-[#C6FF3D]">LogicLinks</span>
             </span>
             <span className="hidden sm:inline text-[11px] text-[#646F77] font-mono ml-2 pl-2 border-l border-[#22282F]">
-              Smart E&TC Learning Platform
+              Team T115 · Smart E&TC Learning Platform
             </span>
           </div>
         </div>

@@ -39,10 +39,10 @@ export const LandingPage: React.FC<LandingPageProps> = ({
             </div>
             <div className="flex flex-col">
               <span className="font-display text-sm font-bold tracking-tight text-[#ECEBE4]">
-                CircuitVerse <span className="text-[#C6FF3D]">AI</span>
+                Chakravyuh <span className="text-[#C6FF3D]">LogicLinks</span>
               </span>
               <span className="text-[10px] text-[#646F77] font-mono leading-none">
-                Smart E&TC Platform
+                Team T115 · Smart E&TC Platform
               </span>
             </div>
           </div>

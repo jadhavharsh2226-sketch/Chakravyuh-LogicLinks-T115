@@ -44,7 +44,7 @@ export class AIMentorService {
     const syllabus = UNIVERSITY_SYLLABI[profile.track] || UNIVERSITY_SYLLABI.BCA_YEAR_1;
 
     // System prompt tailored to student's exact academic track and syllabus
-    const systemPrompt = `You are "Volt", the enthusiastic, cute, and ultra-encouraging chip mascot for CircuitVerse AI (in the fun, gamified style of Duolingo!).
+    const systemPrompt = `You are "Volt", the enthusiastic, cute, and ultra-encouraging chip mascot for Chakravyuh LogicLinks (Team T115) (in the fun, gamified style of Duolingo!).
 
 STUDENT PROFILE:
 - Track / Course: ${syllabus.courseName} - ${syllabus.yearName}
@@ -75,7 +75,7 @@ RESPONSE GUIDELINES:
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
           'HTTP-Referer': 'http://localhost:5173',
-          'X-Title': 'CircuitVerse AI',
+          'X-Title': 'Chakravyuh-LogicLinks-T115',
         },
         body: JSON.stringify({
           model: 'openrouter/free', // 100% Free OpenRouter model with zero credit requirement

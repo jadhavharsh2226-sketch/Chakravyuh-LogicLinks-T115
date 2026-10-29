@@ -1,32 +1,24 @@
-# React + TypeScript + Vite
+# Chakravyuh-LogicLinks-T115
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+**Team T115 · Smart E&TC Learning & Innovation Platform**
 
-Currently, two official plugins are available:
+An interactive, gamified digital electronics and embedded systems workbench for engineering students (SPPU / AICTE curricula & BCA programs).
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## 🚀 Key Features
+- **Clean Virtual Electronics Workbench**: Real-time logic gate simulation, wire propagation, and Boolean algebra verification.
+- **3D Agentic AI Companion (Volt)**: Interactive 3D mascot built with Three.js that blinks, tracks cursor movement, and performs agentic actions on canvas.
+- **Personalized Academic Tracks**: Curriculum presets for E&TC (FE, SE, TE) and BCA (Computer Fundamentals & Digital Electronics).
+- **Gamified Circuit Arena & Puzzles**: Fault-finding challenges, truth table verification, and XP progression.
+- **Microcontroller Code Lab**: Virtual ATmega328P / Arduino C code flashing and pin telemetry.
 
-## React Compiler
+## 🛠️ Stack
+- **Frontend**: React 19, TypeScript, Vite, Tailwind CSS
+- **3D Engine**: Three.js
+- **Animations**: GSAP, Lenis Smooth Scroll, Canvas Confetti
+- **AI Engine**: OpenRouter Free API (`openrouter/free`) with intelligent local fallback
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
-
-## Expanding the Oxlint configuration
-
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
-
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
+## ⚡ Getting Started
+```bash
+npm install
+npm run dev
 ```
-
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
