@@ -1,10 +1,11 @@
 import React, { useState } from 'react';
-import { Send, Sparkles, Volume2, VolumeX } from 'lucide-react';
+import { Send, Sparkles, Volume2, VolumeX, Zap, Wrench, Play, Plus, Power } from 'lucide-react';
 import { ValidationReport } from '../../engine/validator';
 import { StudentProfile } from '../../types/student';
 import { AIMentorService, VoltResponse } from '../../services/aiMentorService';
 import { VoltCharacter, VoltExpression } from '../common/VoltCharacter';
 import { sounds } from '../../services/soundEffects';
+import { AgenticAction } from '../../types/agentic';
 
 interface AIMentorPanelProps {
   validationReport: ValidationReport | null;
@@ -13,6 +14,7 @@ interface AIMentorPanelProps {
   componentsCount?: number;
   switchesState?: Record<string, boolean>;
   activeGates?: string[];
+  onExecuteAgenticAction?: (action: AgenticAction) => void;
 }
 
 export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
@@ -22,6 +24,7 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
   componentsCount = 0,
   switchesState = {},
   activeGates = [],
+  onExecuteAgenticAction,
 }) => {
   const [currentExpression, setCurrentExpression] = useState<VoltExpression>('happy');
   const [voltSpeech, setVoltSpeech] = useState<string>('Ask me anything! I know your syllabus.');
@@ -29,8 +32,8 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
     {
       id: 'init-1',
       role: 'volt',
-      text: `Hey there! ⚡ I'm Volt, your digital logic tutor. I see you're in ${studentProfile.track === 'BCA_YEAR_1' ? 'BCA 1st Year' : 'college'}! If a bulb isn't turning on or you need an exam trick, ask me below!`,
-      tip: 'Tip: Click any prompt below for a quick answer!',
+      text: `Hey there! ⚡ I'm Volt, your Agentic AI logic tutor. I see you're in ${studentProfile.track === 'BCA_YEAR_1' ? 'BCA 1st Year' : 'college'}! I can answer viva questions OR move my cursor to wire gates, flip switches, and test circuits!`,
+      tip: 'Tip: Click any Agentic Action below to watch me take action on canvas!',
     },
   ]);
   const [inputQuestion, setInputQuestion] = useState('');
@@ -81,6 +84,10 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
           tip: response.quickTip,
         },
       ]);
+
+      if (response.action && onExecuteAgenticAction) {
+        onExecuteAgenticAction(response.action);
+      }
     } catch (e) {
       setCurrentExpression('happy');
       setMessages((prev) => [
@@ -93,6 +100,29 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
       ]);
     } finally {
       setIsLoading(false);
+    }
+  };
+
+  const triggerAgenticAction = (action: AgenticAction) => {
+    sounds.playClick();
+    setCurrentExpression('excited');
+    setVoltSpeech(`Moving cursor to ${action.summary.toLowerCase()}`);
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `usr-${Date.now()}`,
+        role: 'user',
+        text: `Volt, ${action.summary}`,
+      },
+      {
+        id: `volt-${Date.now()}`,
+        role: 'volt',
+        text: `⚡ On it! Watch my cursor ${action.summary.toLowerCase()}`,
+        tip: 'Volt agentic cursor is interacting with the canvas in real-time.',
+      },
+    ]);
+    if (onExecuteAgenticAction) {
+      onExecuteAgenticAction(action);
     }
   };
 
@@ -114,12 +144,12 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
           <div>
             <div className="flex items-center gap-1.5">
               <span className="font-bold text-sm text-[#ECEBE4]">Volt</span>
-              <span className="px-2 py-0.2 rounded-full bg-[#C6FF3D]/10 text-[#C6FF3D] border border-[#C6FF3D]/30 font-mono text-[10px] font-bold">
-                Duolingo AI Tutor
+              <span className="px-2 py-0.2 rounded-full bg-[#00E5FF]/10 text-[#00E5FF] border border-[#00E5FF]/30 font-mono text-[10px] font-bold">
+                Agentic AI Tutor ⚡
               </span>
             </div>
             <div className="text-[11px] text-[#9CA3A8] font-mono">
-              Tailored for {studentProfile.track.replace('_', ' ')}
+              Moves cursor & teaches syllabus
             </div>
           </div>
         </div>
@@ -131,6 +161,92 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
         >
           {soundOn ? <Volume2 className="w-4 h-4 text-[#C6FF3D]" /> : <VolumeX className="w-4 h-4 text-[#646F77]" />}
         </button>
+      </div>
+
+      {/* AGENTIC AI ACTION DECK */}
+      <div className="p-3 bg-[#111518] border-b border-[#282E33]">
+        <div className="flex items-center justify-between mb-2">
+          <div className="flex items-center gap-1.5 text-[10px] font-mono font-bold text-[#00E5FF]">
+            <Zap className="w-3.5 h-3.5 text-[#C6FF3D]" />
+            <span>AGENTIC COMMAND DECK</span>
+          </div>
+          <span className="text-[9px] text-[#646F77] font-mono">Click to command Volt</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-1.5">
+          <button
+            onClick={() =>
+              triggerAgenticAction({
+                id: `act_${Date.now()}`,
+                type: 'TOGGLE_SWITCH',
+                targetSwitchLabel: 'Switch A',
+                summary: 'Flipping Switch A',
+              })
+            }
+            className="flex items-center gap-1.5 p-2 rounded-lg bg-[#16191C] border border-[#282E33] hover:border-[#00E5FF] hover:bg-[#00E5FF]/10 text-[#ECEBE4] text-[11px] font-mono transition-all text-left"
+          >
+            <Power className="w-3.5 h-3.5 text-[#00E5FF]" />
+            <span className="truncate">Flip Switch A</span>
+          </button>
+
+          <button
+            onClick={() =>
+              triggerAgenticAction({
+                id: `act_${Date.now()}`,
+                type: 'TOGGLE_SWITCH',
+                targetSwitchLabel: 'Switch B',
+                summary: 'Flipping Switch B',
+              })
+            }
+            className="flex items-center gap-1.5 p-2 rounded-lg bg-[#16191C] border border-[#282E33] hover:border-[#00E5FF] hover:bg-[#00E5FF]/10 text-[#ECEBE4] text-[11px] font-mono transition-all text-left"
+          >
+            <Power className="w-3.5 h-3.5 text-[#00E5FF]" />
+            <span className="truncate">Flip Switch B</span>
+          </button>
+
+          <button
+            onClick={() =>
+              triggerAgenticAction({
+                id: `act_${Date.now()}`,
+                type: 'ADD_COMPONENT',
+                componentType: 'AND',
+                summary: 'Placing AND Gate',
+              })
+            }
+            className="flex items-center gap-1.5 p-2 rounded-lg bg-[#16191C] border border-[#282E33] hover:border-[#C6FF3D] hover:bg-[#C6FF3D]/10 text-[#ECEBE4] text-[11px] font-mono transition-all text-left"
+          >
+            <Plus className="w-3.5 h-3.5 text-[#C6FF3D]" />
+            <span className="truncate">Add AND Gate</span>
+          </button>
+
+          <button
+            onClick={() =>
+              triggerAgenticAction({
+                id: `act_${Date.now()}`,
+                type: 'FIX_CIRCUIT',
+                summary: 'Auto-Fixing Circuit',
+              })
+            }
+            className="flex items-center gap-1.5 p-2 rounded-lg bg-[#16191C] border border-[#282E33] hover:border-[#FFB020] hover:bg-[#FFB020]/10 text-[#ECEBE4] text-[11px] font-mono transition-all text-left"
+          >
+            <Wrench className="w-3.5 h-3.5 text-[#FFB020]" />
+            <span className="truncate">Auto-Fix Circuit</span>
+          </button>
+
+          <button
+            onClick={() =>
+              triggerAgenticAction({
+                id: `act_${Date.now()}`,
+                type: 'TEST_TRUTH_TABLE',
+                summary: 'Running Live Test Sequence',
+              })
+            }
+            className="col-span-2 flex items-center justify-center gap-1.5 p-2 rounded-lg bg-[#00E5FF]/10 border border-[#00E5FF]/40 hover:bg-[#00E5FF]/20 text-[#00E5FF] text-[11px] font-mono font-bold transition-all"
+          >
+            <Play className="w-3.5 h-3.5" />
+            <span>Volt, Run Live Truth Table Test (00→01→11→10)</span>
+          </button>
+        </div>
       </div>
 
       {/* Messages Stream */}
@@ -162,8 +278,8 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
 
         {isLoading && (
           <div className="p-3 rounded-2xl bg-[#16191C] border border-[#282E33] text-xs text-[#9CA3A8] flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[#C6FF3D] animate-ping" />
-            <span>Volt is thinking...</span>
+            <span className="w-2 h-2 rounded-full bg-[#00E5FF] animate-ping" />
+            <span>Volt is analyzing circuit and calculating cursor moves...</span>
           </div>
         )}
       </div>
@@ -201,13 +317,13 @@ export const AIMentorPanel: React.FC<AIMentorPanelProps> = ({
             value={inputQuestion}
             onChange={(e) => setInputQuestion(e.target.value)}
             disabled={isLoading}
-            placeholder="Ask Volt about your circuit or exam..."
-            className="flex-1 bg-[#16191C] border border-[#282E33] rounded-xl px-3 py-2 text-xs text-[#ECEBE4] placeholder:text-[#646F77] focus:outline-none focus:border-[#C6FF3D]"
+            placeholder='Type e.g. "Volt, flip switch A" or "Add AND gate"...'
+            className="flex-1 bg-[#16191C] border border-[#282E33] rounded-xl px-3 py-2 text-xs text-[#ECEBE4] placeholder:text-[#646F77] focus:outline-none focus:border-[#00E5FF]"
           />
           <button
             type="submit"
             disabled={isLoading || !inputQuestion.trim()}
-            className="p-2 rounded-xl bg-[#C6FF3D] text-[#0E1012] hover:bg-[#b8f533] disabled:opacity-40 transition-colors font-bold"
+            className="p-2 rounded-xl bg-[#00E5FF] text-[#0E1012] hover:bg-[#33ebff] disabled:opacity-40 transition-colors font-bold"
           >
             <Send className="w-4 h-4" />
           </button>

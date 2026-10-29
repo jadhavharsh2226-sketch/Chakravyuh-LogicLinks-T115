@@ -2,6 +2,7 @@ import React, { useState, useRef } from 'react';
 import { CircuitComponent, Connection, SignalState } from '../../types';
 import { GateSymbol } from '../common/GateSymbol';
 import { Power, Check, AlertCircle } from 'lucide-react';
+import { AgenticCursor, AgenticCursorState } from './AgenticCursor';
 
 interface CircuitCanvasProps {
   components: CircuitComponent[];
@@ -15,6 +16,7 @@ interface CircuitCanvasProps {
   wireStates: Map<string, SignalState>;
   zoom: number;
   isRunMode: boolean;
+  cursorState?: AgenticCursorState;
 }
 
 export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
@@ -29,6 +31,7 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
   wireStates,
   zoom,
   isRunMode,
+  cursorState,
 }) => {
   const [draggingCompId, setDraggingCompId] = useState<string | null>(null);
   const [dragOffset, setDragOffset] = useState<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -287,6 +290,9 @@ export const CircuitCanvas: React.FC<CircuitCanvasProps> = ({
             </div>
           );
         })}
+
+        {/* Volt Agentic Cursor Overlay */}
+        {cursorState && <AgenticCursor cursorState={cursorState} />}
 
         {components.length === 0 && (
           <div className="absolute left-1/4 top-1/3 p-8 border border-dashed border-[#282E33] rounded-instrument text-center space-y-2 pointer-events-none">

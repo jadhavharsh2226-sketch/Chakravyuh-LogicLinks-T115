@@ -1,6 +1,7 @@
 import { StudentProfile } from '../types/student';
 import { UNIVERSITY_SYLLABI } from './syllabusData';
 import { ValidationReport } from '../engine/validator';
+import { AgenticAction } from '../types/agentic';
 
 const getOpenRouterApiKey = (): string => {
   // 1. Read from Vite environment variable (.env.local)
@@ -25,9 +26,153 @@ export interface VoltResponse {
   message: string;
   expression: 'happy' | 'excited' | 'thinking' | 'encouraging' | 'celebrating';
   quickTip?: string;
+  action?: AgenticAction;
 }
 
 export class AIMentorService {
+  /**
+   * Intelligently parses user text for agentic cursor actions on the circuit canvas
+   */
+  public static detectAgenticAction(
+    userQuestion: string,
+    circuitContext?: {
+      componentsCount: number;
+      switchesState: Record<string, boolean>;
+      activeGates: string[];
+    }
+  ): AgenticAction | undefined {
+    const q = userQuestion.toLowerCase().trim();
+
+    // 1. ADD COMPONENT
+    if (q.includes('add') || q.includes('insert') || q.includes('place') || q.includes('put') || q.includes('give me')) {
+      if (q.includes('xor')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'XOR',
+          summary: 'Placing XOR Gate on canvas...',
+        };
+      }
+      if (q.includes('and')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'AND',
+          summary: 'Placing AND Gate on canvas...',
+        };
+      }
+      if (q.includes('or')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'OR',
+          summary: 'Placing OR Gate on canvas...',
+        };
+      }
+      if (q.includes('not') || q.includes('inverter')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'NOT',
+          summary: 'Placing NOT Gate (Inverter) on canvas...',
+        };
+      }
+      if (q.includes('nand')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'NAND',
+          summary: 'Placing NAND Gate on canvas...',
+        };
+      }
+      if (q.includes('nor')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'NOR',
+          summary: 'Placing NOR Gate on canvas...',
+        };
+      }
+      if (q.includes('switch')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'SWITCH',
+          summary: 'Placing Toggle Switch on canvas...',
+        };
+      }
+      if (q.includes('bulb') || q.includes('led') || q.includes('light')) {
+        return {
+          id: `act_${Date.now()}`,
+          type: 'ADD_COMPONENT',
+          componentType: 'LED',
+          summary: 'Placing Light Bulb on canvas...',
+        };
+      }
+    }
+
+    // 2. TOGGLE SWITCH
+    if (
+      q.includes('flip') ||
+      q.includes('toggle') ||
+      q.includes('turn on') ||
+      q.includes('turn off') ||
+      q.includes('switch a') ||
+      q.includes('switch b')
+    ) {
+      const isSwitchB = q.includes('switch b') || q.includes('flip b') || q.includes(' b');
+      return {
+        id: `act_${Date.now()}`,
+        type: 'TOGGLE_SWITCH',
+        targetSwitchLabel: isSwitchB ? 'Switch B' : 'Switch A',
+        summary: isSwitchB ? 'Flipping Switch B...' : 'Flipping Switch A...',
+      };
+    }
+
+    // 3. FIX / REPAIR CIRCUIT
+    if (
+      q.includes('fix') ||
+      q.includes('repair') ||
+      q.includes('solve') ||
+      q.includes('auto-fix') ||
+      q.includes('help me fix') ||
+      q.includes('correct my circuit')
+    ) {
+      return {
+        id: `act_${Date.now()}`,
+        type: 'FIX_CIRCUIT',
+        summary: 'Diagnosing and automatically repairing circuit connection...',
+      };
+    }
+
+    // 4. TEST / SIMULATE TRUTH TABLE
+    if (
+      q.includes('test') ||
+      q.includes('simulate') ||
+      q.includes('run truth table') ||
+      q.includes('verify') ||
+      q.includes('test the circuit') ||
+      q.includes('check table')
+    ) {
+      return {
+        id: `act_${Date.now()}`,
+        type: 'TEST_TRUTH_TABLE',
+        summary: 'Testing truth table vector sequence (0,0) → (0,1) → (1,1) → (1,0)...',
+      };
+    }
+
+    // 5. RESET CANVAS
+    if (q.includes('reset') || q.includes('clear canvas') || q.includes('start over')) {
+      return {
+        id: `act_${Date.now()}`,
+        type: 'RESET_CANVAS',
+        summary: 'Resetting canvas to initial lesson layout...',
+      };
+    }
+
+    return undefined;
+  }
+
   /**
    * Generates a Duolingo-style personalized tutoring response from Volt
    */
@@ -42,9 +187,11 @@ export class AIMentorService {
     }
   ): Promise<VoltResponse> {
     const syllabus = UNIVERSITY_SYLLABI[profile.track] || UNIVERSITY_SYLLABI.BCA_YEAR_1;
+    const detectedAction = this.detectAgenticAction(userQuestion, circuitContext);
 
     // System prompt tailored to student's exact academic track and syllabus
     const systemPrompt = `You are "Volt", the enthusiastic, cute, and ultra-encouraging chip mascot for Chakravyuh LogicLinks (Team T115) (in the fun, gamified style of Duolingo!).
+You are also an AGENTIC AI assistant: when the student asks you to add gates, flip switches, fix circuits, or test truth tables, you confirm with excitement that your virtual cursor is taking action on their workbench!
 
 STUDENT PROFILE:
 - Track / Course: ${syllabus.courseName} - ${syllabus.yearName}
@@ -69,8 +216,12 @@ RESPONSE GUIDELINES:
     // Attempt OpenRouter API call
     try {
       const apiKey = getOpenRouterApiKey();
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 9000);
+
       const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Authorization': `Bearer ${apiKey}`,
           'Content-Type': 'application/json',
@@ -84,14 +235,15 @@ RESPONSE GUIDELINES:
             { role: 'user', content: userQuestion },
           ],
           temperature: 0.7,
-          max_tokens: 250,
+          max_tokens: 220,
         }),
       });
+      clearTimeout(timeoutId);
 
       if (response.ok) {
         const data = await response.json();
         const replyText = data?.choices?.[0]?.message?.content || data?.choices?.[0]?.message?.reasoning;
-        if (replyText) {
+        if (replyText && typeof replyText === 'string' && replyText.trim().length > 0) {
           // Infer expression
           let expression: VoltResponse['expression'] = 'happy';
           if (replyText.includes('🎉') || replyText.includes('Awesome') || replyText.includes('Great job')) {
@@ -104,19 +256,31 @@ RESPONSE GUIDELINES:
             expression = 'excited';
           }
 
+          let finalMessage = replyText.trim();
+          if (detectedAction) {
+            finalMessage += `\n\n⚡ **Volt Taking Action:** Watch my cursor ${detectedAction.summary.toLowerCase()}`;
+          }
+
           return {
-            message: replyText.trim(),
+            message: finalMessage,
             expression,
-            quickTip: `BCA Tip: Remember this for your ${syllabus.yearName} exam!`,
+            quickTip: `Tip: Remember this logic rule for your ${syllabus.yearName} exams!`,
+            action: detectedAction,
           };
         }
       }
     } catch (err) {
-      console.warn('OpenRouter API call failed or offline, using Volt smart engine fallback:', err);
+      console.warn('OpenRouter API call timed out or network error, using Volt smart engine fallback:', err);
     }
 
-    // High quality offline fallback tailored to user's year & question
-    return this.getSmartLocalFallback(userQuestion, profile, validationReport);
+    // High quality instant fallback tailored to user's year & question
+    const fallback = this.getSmartLocalFallback(userQuestion, profile, validationReport);
+    if (detectedAction) {
+      fallback.action = detectedAction;
+      fallback.message += `\n\n⚡ **Volt Taking Action:** Watch my cursor ${detectedAction.summary.toLowerCase()}`;
+      fallback.expression = 'excited';
+    }
+    return fallback;
   }
 
   /**
